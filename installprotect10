@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🎨 Updating iOS Dark Theme with Premium Admin & Console Design..."
+echo "🎨 Updating RENDZZ Official Theme with Custom Dashboard..."
 
 PANEL_PATH="/var/www/pterodactyl"
 BASE_TEMPLATE="$PANEL_PATH/resources/views/templates/base/core.blade.php"
@@ -19,7 +19,7 @@ cp "$APP_LAYOUT" "${APP_LAYOUT}.bak_${TIMESTAMP}"
 cp "$ADMIN_LAYOUT" "${ADMIN_LAYOUT}.bak_${TIMESTAMP}"
 echo "📦 Backup semua file OK"
 
-# ===== 1. UPDATE BASE TEMPLATE (PREMIUM iOS THEME) =====
+# ===== 1. UPDATE BASE TEMPLATE (RENDZZ THEME) =====
 cat > "$BASE_TEMPLATE" << 'EOF'
 @extends('templates/wrapper', [
     'css' => ['body' => 'bg-neutral-800'],
@@ -29,55 +29,47 @@ cat > "$BASE_TEMPLATE" << 'EOF'
     <div id="modal-portal"></div>
     <div id="app"></div>
 
-    <!-- Premium iOS Theme CSS -->
+    <!-- RENDZZ Official Theme CSS -->
     <style>
-    /* ===== PREMIUM iOS DARK THEME - RENSTR EDITION ===== */
+    /* ===== RENDZZ DARK THEME ===== */
     :root {
-      --ios-bg: #000000;
-      --ios-card: rgba(28, 28, 30, 0.85);
-      --ios-card-secondary: rgba(44, 44, 46, 0.9);
-      --ios-surface: rgba(58, 58, 60, 0.8);
-      --ios-blue: #0a84ff;
-      --ios-blue-light: #5ac8fa;
-      --ios-green: #30d158;
-      --ios-red: #ff375f;
-      --ios-purple: #bf5af2;
-      --ios-orange: #ff9f0a;
-      --ios-cyan: #64d2ff;
-      --ios-pink: #ff2d55;
-      --ios-text-primary: #ffffff;
-      --ios-text-secondary: #8e8e93;
-      --ios-text-tertiary: #636366;
-      --ios-border: rgba(56, 56, 58, 0.6);
-      --ios-blur: rgba(28, 28, 30, 0.75);
-      --ios-shadow: 0 10px 40px rgba(0,0,0,0.35);
-      --ios-glow: 0 0 40px rgba(10, 132, 255, 0.15);
-      --ios-glow-green: 0 0 40px rgba(48, 209, 88, 0.15);
-      --ios-glow-purple: 0 0 40px rgba(191, 90, 242, 0.15);
+      --rendzz-bg: #0a0a0f;
+      --rendzz-card: #1a1a2e;
+      --rendzz-card-secondary: #16213e;
+      --rendzz-surface: #0f3460;
+      --rendzz-primary: #00adb5;
+      --rendzz-secondary: #393e46;
+      --rendzz-accent: #ff2e63;
+      --rendzz-success: #00ffab;
+      --rendzz-danger: #ff304f;
+      --rendzz-warning: #ff9a00;
+      --rendzz-info: #00d2ff;
+      --rendzz-text-primary: #eeeeee;
+      --rendzz-text-secondary: #aaaaaa;
+      --rendzz-border: rgba(0, 173, 181, 0.3);
+      --rendzz-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      --rendzz-glow: 0 0 20px rgba(0, 173, 181, 0.3);
+      --server-online: #30d158;
+      --server-offline: #ff375f;
+      --server-starting: #ff9f0a;
+      --server-stopping: #ffd60a;
+      --server-installing: #64d2ff;
     }
 
-    /* PREMIUM Background with Dynamic Gradient */
+    /* Background */
     body:not(.in-file-manager) {
-      background: 
-        radial-gradient(ellipse at 20% 20%, rgba(10, 132, 255, 0.1) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 80%, rgba(191, 90, 242, 0.1) 0%, transparent 60%),
-        radial-gradient(ellipse at 40% 60%, rgba(255, 55, 95, 0.05) 0%, transparent 60%),
-        linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,20,30,0.9) 100%),
-        url('https://files.catbox.moe/z32ox4.jpg') !important;
-      background-size: cover, cover, cover, cover, cover !important;
+      background: linear-gradient(135deg, #0a0a0f 0%, #16213e 100%), url('https://files.catbox.moe/z32ox4.jpg') !important;
+      background-size: cover !important;
       background-position: center !important;
       background-attachment: fixed !important;
-      background-blend-mode: overlay, overlay, overlay, normal, overlay !important;
-      color: var(--ios-text-primary) !important;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Inter", sans-serif !important;
+      color: var(--rendzz-text-primary) !important;
+      font-family: 'Segoe UI', 'Inter', system-ui, sans-serif !important;
       margin: 0;
       padding: 0;
       min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
     }
 
-    /* Animated Gradient Overlay */
+    /* Neon glow effect */
     body:not(.in-file-manager)::before {
       content: '';
       position: fixed;
@@ -86,355 +78,276 @@ cat > "$BASE_TEMPLATE" << 'EOF'
       right: 0;
       bottom: 0;
       background: 
-        radial-gradient(circle at 20% 20%, rgba(10, 132, 255, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 80% 20%, rgba(191, 90, 242, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 40% 80%, rgba(48, 209, 88, 0.1) 0%, transparent 40%);
+        radial-gradient(circle at 20% 20%, rgba(0, 173, 181, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 46, 99, 0.1) 0%, transparent 50%);
       pointer-events: none;
       z-index: -1;
-      animation: gradientShift 20s ease infinite;
     }
 
-    @keyframes gradientShift {
-      0%, 100% { 
-        background: 
-          radial-gradient(circle at 20% 20%, rgba(10, 132, 255, 0.15) 0%, transparent 40%),
-          radial-gradient(circle at 80% 20%, rgba(191, 90, 242, 0.15) 0%, transparent 40%),
-          radial-gradient(circle at 40% 80%, rgba(48, 209, 88, 0.1) 0%, transparent 40%);
-      }
-      33% { 
-        background: 
-          radial-gradient(circle at 80% 20%, rgba(10, 132, 255, 0.15) 0%, transparent 40%),
-          radial-gradient(circle at 40% 80%, rgba(191, 90, 242, 0.15) 0%, transparent 40%),
-          radial-gradient(circle at 20% 20%, rgba(48, 209, 88, 0.1) 0%, transparent 40%);
-      }
-      66% { 
-        background: 
-          radial-gradient(circle at 40% 80%, rgba(10, 132, 255, 0.15) 0%, transparent 40%),
-          radial-gradient(circle at 20% 20%, rgba(191, 90, 242, 0.15) 0%, transparent 40%),
-          radial-gradient(circle at 80% 20%, rgba(48, 209, 88, 0.1) 0%, transparent 40%);
-      }
-    }
-
-    /* === PREMIUM CONSOLE STYLING === */
-    /* Console Container - Terminal Style */
-    .console-container,
-    .terminal,
-    [class*="console"],
-    [class*="terminal"],
-    .bg-gray-700:has(textarea),
-    textarea.bg-gray-700 {
-      background: rgba(10, 10, 12, 0.95) !important;
-      backdrop-filter: blur(20px) !important;
-      border: 1px solid rgba(10, 132, 255, 0.3) !important;
-      border-radius: 16px !important;
-      box-shadow: 
-        0 10px 40px rgba(0,0,0,0.5),
-        inset 0 1px 0 rgba(255,255,255,0.1),
-        0 0 0 1px rgba(10, 132, 255, 0.1) !important;
-      font-family: 'SF Mono', 'Cascadia Code', 'Monaco', monospace !important;
-      font-size: 14px !important;
-      color: #0afc6e !important;
-      text-shadow: 0 0 10px rgba(10, 252, 110, 0.5) !important;
-    }
-
-    /* Console Textarea */
-    textarea.bg-gray-700,
-    .console-container textarea {
-      background: transparent !important;
-      border: none !important;
-      color: #0afc6e !important;
-      caret-color: #0a84ff !important;
-      padding: 20px !important;
-      line-height: 1.6 !important;
-      font-size: 14px !important;
-      resize: none !important;
-    }
-
-    /* Console Input */
-    .console-input {
-      background: rgba(20, 20, 25, 0.9) !important;
-      border: 1px solid rgba(10, 132, 255, 0.4) !important;
+    /* ===== SERVER DASHBOARD STYLING ===== */
+    /* Server Cards */
+    .server-card,
+    [class*="server-"],
+    .bg-gray-600.rounded {
+      background: linear-gradient(145deg, var(--rendzz-card), var(--rendzz-card-secondary)) !important;
+      border: 1px solid var(--rendzz-border) !important;
       border-radius: 12px !important;
-      color: #ffffff !important;
-      padding: 14px 18px !important;
-      font-family: 'SF Mono', monospace !important;
-      font-size: 14px !important;
-    }
-
-    /* Console Stats Cards */
-    .server-stats-card,
-    .stats-card,
-    .bg-gray-800.rounded {
-      background: linear-gradient(145deg, rgba(28, 28, 30, 0.9), rgba(20, 20, 25, 0.9)) !important;
-      backdrop-filter: blur(30px) !important;
-      border: 1px solid rgba(10, 132, 255, 0.2) !important;
-      border-radius: 20px !important;
-      padding: 24px !important;
-      margin: 16px !important;
-      box-shadow: 
-        0 15px 35px rgba(0,0,0,0.4),
-        0 0 60px rgba(10, 132, 255, 0.1) !important;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    }
-
-    .server-stats-card:hover {
-      transform: translateY(-5px) !important;
-      border-color: rgba(10, 132, 255, 0.5) !important;
-      box-shadow: 
-        0 20px 50px rgba(0,0,0,0.5),
-        0 0 80px rgba(10, 132, 255, 0.2) !important;
-    }
-
-    /* Stats Grid Layout */
-    .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4.gap-6 {
-      display: grid !important;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
-      gap: 24px !important;
-      padding: 20px !important;
-    }
-
-    /* Individual Stat Box */
-    .stat-box {
-      background: linear-gradient(135deg, rgba(28, 28, 30, 0.85), rgba(44, 44, 46, 0.9)) !important;
-      backdrop-filter: blur(25px) !important;
-      border: 1px solid var(--ios-border) !important;
-      border-radius: 18px !important;
-      padding: 20px !important;
+      box-shadow: var(--rendzz-shadow) !important;
+      transition: all 0.3s ease !important;
       position: relative;
       overflow: hidden;
     }
 
-    .stat-box::before {
+    .server-card::before {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, var(--ios-blue), var(--ios-purple)) !important;
+      background: var(--rendzz-primary);
+      transition: all 0.3s ease;
     }
 
-    .stat-box.cpu::before { background: linear-gradient(90deg, var(--ios-blue), #5ac8fa) !important; }
-    .stat-box.memory::before { background: linear-gradient(90deg, var(--ios-green), #30d158) !important; }
-    .stat-box.disk::before { background: linear-gradient(90deg, var(--ios-orange), #ff9f0a) !important; }
-    .stat-box.network::before { background: linear-gradient(90deg, var(--ios-purple), #bf5af2) !important; }
-
-    /* Stat Labels */
-    .stat-label {
-      color: var(--ios-text-secondary) !important;
-      font-size: 13px !important;
-      font-weight: 500 !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.5px !important;
-      margin-bottom: 8px !important;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .server-card:hover {
+      transform: translateY(-5px) !important;
+      border-color: var(--rendzz-primary) !important;
+      box-shadow: 0 12px 40px rgba(0, 173, 181, 0.3) !important;
     }
 
-    .stat-label i {
-      font-size: 16px !important;
-      opacity: 0.8;
+    .server-card:hover::before {
+      background: linear-gradient(90deg, var(--rendzz-primary), var(--rendzz-accent)) !important;
     }
 
-    /* Stat Values */
-    .stat-value {
-      font-size: 28px !important;
-      font-weight: 800 !important;
-      background: linear-gradient(90deg, var(--ios-text-primary), var(--ios-text-secondary)) !important;
+    /* Server Status Colors */
+    .server-card[data-status="running"]::before {
+      background: var(--server-online) !important;
+    }
+    
+    .server-card[data-status="offline"]::before {
+      background: var(--server-offline) !important;
+    }
+    
+    .server-card[data-status="starting"]::before {
+      background: var(--server-starting) !important;
+      animation: pulse 1.5s infinite;
+    }
+    
+    .server-card[data-status="stopping"]::before {
+      background: var(--server-stopping) !important;
+      animation: pulse 1.5s infinite;
+    }
+    
+    .server-card[data-status="installing"]::before {
+      background: var(--server-installing) !important;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Server Status Badges */
+    .bg-success, .status-online {
+      background: linear-gradient(135deg, var(--server-online), #25c748) !important;
+      color: white !important;
+      border-radius: 20px !important;
+      padding: 4px 12px !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+
+    .bg-danger, .status-offline {
+      background: linear-gradient(135deg, var(--server-offline), #ff2d55) !important;
+      color: white !important;
+      border-radius: 20px !important;
+      padding: 4px 12px !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+
+    .bg-warning, .status-starting {
+      background: linear-gradient(135deg, var(--server-starting), #ff8a00) !important;
+      color: white !important;
+      border-radius: 20px !important;
+      padding: 4px 12px !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      animation: pulse 1.5s infinite;
+    }
+
+    /* Empty Server State */
+    .text-gray-400.text-center.py-12 {
+      padding: 3rem 1rem !important;
+      background: var(--rendzz-card) !important;
+      border-radius: 12px !important;
+      border: 2px dashed var(--rendzz-border) !important;
+      margin: 2rem auto !important;
+      max-width: 600px !important;
+    }
+
+    .text-gray-400.text-center.py-12 h3 {
+      color: var(--rendzz-text-primary) !important;
+      font-size: 24px !important;
+      font-weight: 700 !important;
+      margin-bottom: 1rem !important;
+      background: linear-gradient(90deg, var(--rendzz-primary), var(--rendzz-accent)) !important;
       -webkit-background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
-      background-clip: text !important;
+    }
+
+    .text-gray-400.text-center.py-12 p {
+      color: var(--rendzz-text-secondary) !important;
+      font-size: 16px !important;
+      margin-bottom: 1.5rem !important;
+    }
+
+    /* Server Resource Usage */
+    .server-resource {
+      background: var(--rendzz-card-secondary) !important;
+      border-radius: 8px !important;
+      padding: 12px !important;
       margin: 8px 0 !important;
-      line-height: 1.2 !important;
+      border-left: 3px solid var(--rendzz-primary) !important;
     }
 
-    /* Stat Progress Bars */
-    .stat-progress {
-      height: 8px !important;
-      background: rgba(255,255,255,0.1) !important;
-      border-radius: 4px !important;
-      overflow: hidden !important;
-      margin-top: 12px !important;
+    .server-resource.cpu {
+      border-left-color: var(--rendzz-primary) !important;
     }
 
-    .stat-progress-bar {
-      height: 100% !important;
-      border-radius: 4px !important;
-      background: linear-gradient(90deg, var(--ios-blue), var(--ios-purple)) !important;
-      position: relative;
-      overflow: hidden;
+    .server-resource.memory {
+      border-left-color: var(--rendzz-success) !important;
     }
 
-    .stat-progress-bar::after {
-      content: '';
-      position: absolute;
+    .server-resource.disk {
+      border-left-color: var(--rendzz-accent) !important;
+    }
+
+    .server-resource.network {
+      border-left-color: var(--rendzz-info) !important;
+    }
+
+    /* ===== FOOTER COPYRIGHT ===== */
+    footer .text-center,
+    .text-gray-500,
+    .text-gray-600 {
+      color: var(--rendzz-text-secondary) !important;
+      font-size: 14px !important;
+    }
+
+    footer .text-center::after {
+      content: "RENDZZ Official © 2024" !important;
+      display: block !important;
+      margin-top: 4px !important;
+      font-weight: 600 !important;
+      color: var(--rendzz-primary) !important;
+    }
+
+    /* Replace Pterodactyl copyright */
+    div:contains("Pterodactyl"),
+    div:contains("© 2015"),
+    div:contains("© 2015 - 2026") {
+      visibility: hidden !important;
+      position: relative !important;
+    }
+
+    div:contains("Pterodactyl")::after,
+    div:contains("© 2015")::after,
+    div:contains("© 2015 - 2026")::after {
+      content: "RENDZZ Official" !important;
+      visibility: visible !important;
+      position: absolute !important;
       top: 0;
       left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent) !important;
-      animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
-
-    /* === PREMIUM ADMIN PANEL STYLING === */
-    /* Admin Sidebar */
-    .admin-sidebar,
-    nav.bg-gray-800,
-    aside.bg-gray-800 {
-      background: linear-gradient(180deg, rgba(10, 10, 15, 0.95), rgba(20, 20, 30, 0.9)) !important;
-      backdrop-filter: blur(40px) saturate(200%) !important;
-      border-right: 1px solid rgba(10, 132, 255, 0.2) !important;
-      box-shadow: 
-        5px 0 30px rgba(0,0,0,0.3),
-        inset -1px 0 0 rgba(255,255,255,0.05) !important;
-    }
-
-    /* Admin Menu Items */
-    .admin-menu-item,
-    nav a,
-    aside a {
-      color: var(--ios-text-secondary) !important;
-      padding: 16px 20px !important;
-      margin: 4px 12px !important;
-      border-radius: 14px !important;
-      display: flex !important;
-      align-items: center !important;
-      gap: 12px !important;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      position: relative !important;
-      overflow: hidden !important;
-    }
-
-    .admin-menu-item::before,
-    nav a::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(10, 132, 255, 0.1), transparent) !important;
-      transition: left 0.6s;
-    }
-
-    .admin-menu-item:hover,
-    nav a:hover {
-      background: rgba(10, 132, 255, 0.1) !important;
-      color: var(--ios-text-primary) !important;
-      transform: translateX(8px) !important;
-      border-left: 3px solid var(--ios-blue) !important;
-    }
-
-    .admin-menu-item:hover::before,
-    nav a:hover::before {
-      left: 100%;
-    }
-
-    .admin-menu-item.active {
-      background: linear-gradient(90deg, rgba(10, 132, 255, 0.2), rgba(10, 132, 255, 0.1)) !important;
-      color: var(--ios-blue) !important;
-      border-left: 3px solid var(--ios-blue) !important;
-    }
-
-    /* Admin Main Content */
-    .admin-content,
-    main.bg-gray-100 {
-      background: transparent !important;
-      padding: 30px !important;
-    }
-
-    /* Admin Cards */
-    .admin-card,
-    .bg-white.rounded {
-      background: linear-gradient(145deg, rgba(28, 28, 30, 0.9), rgba(44, 44, 46, 0.9)) !important;
-      backdrop-filter: blur(30px) !important;
-      border: 1px solid rgba(56, 56, 58, 0.5) !important;
-      border-radius: 20px !important;
-      padding: 30px !important;
-      box-shadow: 
-        0 20px 60px rgba(0,0,0,0.4),
-        0 0 80px rgba(10, 132, 255, 0.1) !important;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    }
-
-    .admin-card:hover {
-      transform: translateY(-5px) !important;
-      border-color: rgba(10, 132, 255, 0.4) !important;
-      box-shadow: 
-        0 25px 70px rgba(0,0,0,0.5),
-        0 0 100px rgba(10, 132, 255, 0.15) !important;
-    }
-
-    /* Admin Headers */
-    .admin-header,
-    h1, h2, h3 {
-      background: linear-gradient(90deg, #0a84ff, #5ac8fa, #bf5af2) !important;
-      -webkit-background-clip: text !important;
-      -webkit-text-fill-color: transparent !important;
-      background-size: 200% auto !important;
-      animation: gradientText 3s ease infinite !important;
-      font-weight: 800 !important;
-      letter-spacing: -0.5px !important;
-      margin-bottom: 24px !important;
-    }
-
-    @keyframes gradientText {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    /* Admin Tables */
-    .admin-table {
-      background: rgba(28, 28, 30, 0.8) !important;
-      backdrop-filter: blur(20px) !important;
-      border-radius: 16px !important;
-      overflow: hidden !important;
-      border: 1px solid rgba(56, 56, 58, 0.5) !important;
-    }
-
-    .admin-table th {
-      background: linear-gradient(90deg, rgba(10, 132, 255, 0.2), rgba(10, 132, 255, 0.1)) !important;
-      color: var(--ios-text-primary) !important;
+      color: var(--rendzz-primary) !important;
       font-weight: 600 !important;
-      padding: 18px 20px !important;
-      border-bottom: 1px solid rgba(10, 132, 255, 0.3) !important;
     }
 
-    .admin-table td {
-      padding: 16px 20px !important;
-      border-bottom: 1px solid rgba(56, 56, 58, 0.3) !important;
-      color: var(--ios-text-secondary) !important;
-      transition: all 0.2s ease !important;
+    /* ===== NO SERVERS MESSAGE ===== */
+    div:contains("There are no servers"),
+    div:contains("no servers"),
+    div:contains("associated with your account") {
+      position: relative !important;
     }
 
-    .admin-table tr:hover td {
-      background: rgba(10, 132, 255, 0.05) !important;
-      color: var(--ios-text-primary) !important;
+    div:contains("There are no servers")::after,
+    div:contains("no servers")::after,
+    div:contains("associated with your account")::after {
+      content: "SERVER LU GAADA 🫢" !important;
+      display: block !important;
+      font-size: 24px !important;
+      font-weight: 700 !important;
+      color: var(--rendzz-accent) !important;
+      text-align: center !important;
+      margin: 2rem 0 !important;
+      padding: 2rem !important;
+      background: var(--rendzz-card) !important;
+      border-radius: 12px !important;
+      border: 2px dashed var(--rendzz-border) !important;
+      animation: bounce 2s infinite;
     }
 
-    /* === FILE MANAGER EXCLUSION === */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* ===== BUTTONS ===== */
+    button, .btn, [type="submit"] {
+      background: linear-gradient(135deg, var(--rendzz-primary), #008b94) !important;
+      color: white !important;
+      border: none !important;
+      border-radius: 8px !important;
+      padding: 12px 24px !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      transition: all 0.3s ease !important;
+    }
+
+    button:hover, .btn:hover {
+      background: linear-gradient(135deg, #008b94, #00747a) !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 20px rgba(0, 173, 181, 0.3) !important;
+    }
+
+    /* ===== CARDS ===== */
+    .bg-white, .bg-gray-100, .card, .panel {
+      background: var(--rendzz-card) !important;
+      border: 1px solid var(--rendzz-border) !important;
+      border-radius: 12px !important;
+      color: var(--rendzz-text-primary) !important;
+      box-shadow: var(--rendzz-shadow) !important;
+      transition: all 0.3s ease !important;
+    }
+
+    .bg-white:hover, .card:hover {
+      border-color: var(--rendzz-primary) !important;
+      box-shadow: 0 12px 40px rgba(0, 173, 181, 0.2) !important;
+      transform: translateY(-2px) !important;
+    }
+
+    /* ===== FILE MANAGER EXCLUSION ===== */
     .elfinder * {
       all: revert !important;
     }
     </style>
 
-    <!-- Font Awesome for Icons -->
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SF Pro Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
-    <!-- SF Mono Font for Console -->
-    <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        // Deteksi jika sedang di file manager
+        // Deteksi file manager
         const isInFileManager = () => {
           return document.querySelector('.elfinder') !== null || 
                  window.location.pathname.includes('/file-manager');
@@ -448,36 +361,31 @@ cat > "$BASE_TEMPLATE" << 'EOF'
         const username = @json(auth()->user()->name?? 'User');
         const isAdmin = @json(auth()->user() && auth()->user()->root_admin ?? false);
         
-        // Create Premium Welcome Message
+        // Create RENDZZ Welcome Message
         const message = document.createElement("div");
         message.innerHTML = `
           <div style="display: flex; align-items: center; gap: 16px;">
             <div style="
               width: 48px;
               height: 48px;
-              background: linear-gradient(135deg, #0a84ff, #bf5af2);
-              border-radius: 14px;
+              background: linear-gradient(135deg, #00adb5, #ff2e63);
+              border-radius: 12px;
               display: flex;
               align-items: center;
               justify-content: center;
               font-size: 20px;
               color: white;
-              box-shadow: 0 8px 32px rgba(10, 132, 255, 0.3);
-              animation: iconFloat 3s ease-in-out infinite;
+              box-shadow: 0 8px 32px rgba(0, 173, 181, 0.3);
             ">
-              <i class="fas fa-${isAdmin ? 'crown' : 'cube'}"></i>
+              <i class="fas fa-${isAdmin ? 'shield-alt' : 'server'}"></i>
             </div>
             <div>
-              <div style="font-weight: 700; font-size: 16px; letter-spacing: 0.2px;">
-                Welcome, <strong style="background: linear-gradient(90deg, #0a84ff, #bf5af2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${username}</strong>! ${isAdmin ? '👑' : '👋'}
+              <div style="font-weight: 700; font-size: 16px;">
+                Welcome back, <strong style="color: #00adb5;">${username}</strong>
               </div>
-              <div style="font-size: 12px; opacity: 0.8; margin-top: 4px; display: flex; align-items: center; gap: 8px;">
-                <span style="display: flex; align-items: center; gap: 4px;">
-                  <i class="fas fa-shield-alt" style="color: #30d158;"></i>
-                  ${isAdmin ? 'Administrator Access' : 'User Access'}
-                </span>
-                <span>•</span>
-                <span>© Rendzz Official</span>
+              <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">
+                <i class="fas fa-user-shield" style="color: #ff2e63;"></i>
+                ${isAdmin ? 'Administrator' : 'User'} • RENDZZ Official
               </div>
             </div>
           </div>
@@ -487,21 +395,20 @@ cat > "$BASE_TEMPLATE" << 'EOF'
           position: "fixed",
           bottom: "30px",
           right: "30px",
-          background: "rgba(28, 28, 30, 0.95)",
-          backdropFilter: "blur(40px) saturate(200%)",
-          WebkitBackdropFilter: "blur(40px) saturate(200%)",
-          color: "#ffffff",
-          padding: "22px 26px",
-          borderRadius: "24px",
-          fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif",
+          background: "rgba(26, 26, 46, 0.95)",
+          backdropFilter: "blur(20px)",
+          color: "#eeeeee",
+          padding: "20px 24px",
+          borderRadius: "16px",
+          fontFamily: "'Segoe UI', system-ui, sans-serif",
           fontSize: "14px",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 80px rgba(10, 132, 255, 0.15)",
-          border: "1px solid rgba(56, 56, 58, 0.6)",
+          boxShadow: "0 10px 40px rgba(0,0,0,0.5), 0 0 20px rgba(0, 173, 181, 0.2)",
+          border: "1px solid rgba(0, 173, 181, 0.3)",
           zIndex: "99999",
           opacity: "0",
-          transform: "translateY(100px) scale(0.9)",
-          transition: "all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)",
-          maxWidth: "380px",
+          transform: "translateY(100px)",
+          transition: "all 0.6s ease",
+          maxWidth: "350px",
           cursor: "pointer",
         });
 
@@ -510,13 +417,13 @@ cat > "$BASE_TEMPLATE" << 'EOF'
         // Animate in
         setTimeout(() => {
           message.style.opacity = "1";
-          message.style.transform = "translateY(0) scale(1)";
-        }, 500);
+          message.style.transform = "translateY(0)";
+        }, 800);
         
         // Auto-hide after 8 seconds
         setTimeout(() => {
           message.style.opacity = "0";
-          message.style.transform = "translateY(100px) scale(0.9)";
+          message.style.transform = "translateY(100px)";
         }, 8000);
         
         setTimeout(() => {
@@ -528,7 +435,7 @@ cat > "$BASE_TEMPLATE" << 'EOF'
         // Click to dismiss
         message.addEventListener("click", () => {
           message.style.opacity = "0";
-          message.style.transform = "translateY(100px) scale(0.9)";
+          message.style.transform = "translateY(100px)";
           setTimeout(() => {
             if (message.parentNode) {
               message.remove();
@@ -536,148 +443,125 @@ cat > "$BASE_TEMPLATE" << 'EOF'
           }, 500);
         });
 
-        // Add Premium Console Enhancements
-        const enhanceConsole = () => {
-          if (isInFileManager()) return;
-          
-          // Find console containers
-          document.querySelectorAll('.console-container, textarea.bg-gray-700').forEach(consoleEl => {
-            if (!consoleEl.closest('.elfinder')) {
-              // Add terminal header
-              const header = consoleEl.querySelector('.terminal-header');
-              if (!header) {
-                const newHeader = document.createElement('div');
-                newHeader.className = 'terminal-header';
-                newHeader.innerHTML = `
-                  <div style="
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    padding: 12px 20px;
-                    background: rgba(10, 10, 15, 0.9);
-                    border-bottom: 1px solid rgba(10, 132, 255, 0.3);
-                    border-radius: 16px 16px 0 0;
-                  ">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                      <div style="display: flex; gap: 8px;">
-                        <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff375f;"></div>
-                        <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff9f0a;"></div>
-                        <div style="width: 12px; height: 12px; border-radius: 50%; background: #30d158;"></div>
-                      </div>
-                      <span style="color: #8e8e93; font-size: 13px; font-weight: 500;">
-                        <i class="fas fa-terminal"></i> RENSTR Console
-                      </span>
-                    </div>
-                    <div style="color: #0afc6e; font-family: 'SF Mono'; font-size: 12px;">
-                      <i class="fas fa-bolt"></i> LIVE
-                    </div>
-                  </div>
-                `;
-                consoleEl.insertBefore(newHeader, consoleEl.firstChild);
-              }
-            }
-          });
-
-          // Enhance stats cards
-          document.querySelectorAll('.bg-gray-800.rounded, .server-stats-card').forEach(card => {
+        // ===== UPDATE SERVER CARDS =====
+        const updateServerCards = () => {
+          // Add status indicators to server cards
+          document.querySelectorAll('[class*="server-"], .bg-gray-600.rounded').forEach(card => {
             if (!card.closest('.elfinder')) {
-              card.classList.add('server-stats-card');
+              card.classList.add('server-card');
               
-              // Add icons based on content
-              const text = card.textContent.toLowerCase();
-              if (text.includes('cpu') || text.includes('load')) {
-                card.classList.add('cpu');
-                const icon = document.createElement('i');
-                icon.className = 'fas fa-microchip';
-                icon.style.marginRight = '8px';
-                card.querySelector('div')?.prepend(icon);
-              } else if (text.includes('memory') || text.includes('ram')) {
-                card.classList.add('memory');
-                const icon = document.createElement('i');
-                icon.className = 'fas fa-memory';
-                icon.style.marginRight = '8px';
-                card.querySelector('div')?.prepend(icon);
-              } else if (text.includes('disk') || text.includes('storage')) {
-                card.classList.add('disk');
-                const icon = document.createElement('i');
-                icon.className = 'fas fa-hdd';
-                icon.style.marginRight = '8px';
-                card.querySelector('div')?.prepend(icon);
-              } else if (text.includes('network')) {
-                card.classList.add('network');
-                const icon = document.createElement('i');
-                icon.className = 'fas fa-wifi';
-                icon.style.marginRight = '8px';
-                card.querySelector('div')?.prepend(icon);
+              // Detect server status
+              const cardText = card.textContent.toLowerCase();
+              if (cardText.includes('running') || cardText.includes('online')) {
+                card.setAttribute('data-status', 'running');
+              } else if (cardText.includes('offline') || cardText.includes('stopped')) {
+                card.setAttribute('data-status', 'offline');
+              } else if (cardText.includes('starting')) {
+                card.setAttribute('data-status', 'starting');
+              } else if (cardText.includes('stopping')) {
+                card.setAttribute('data-status', 'stopping');
+              } else if (cardText.includes('install')) {
+                card.setAttribute('data-status', 'installing');
+              }
+            }
+          });
+
+          // Add resource usage styling
+          document.querySelectorAll('.progress').forEach(progress => {
+            if (!progress.closest('.elfinder')) {
+              progress.parentElement.classList.add('server-resource');
+              
+              if (progress.textContent.toLowerCase().includes('cpu')) {
+                progress.parentElement.classList.add('cpu');
+              } else if (progress.textContent.toLowerCase().includes('memory') || progress.textContent.toLowerCase().includes('ram')) {
+                progress.parentElement.classList.add('memory');
+              } else if (progress.textContent.toLowerCase().includes('disk')) {
+                progress.parentElement.classList.add('disk');
+              } else if (progress.textContent.toLowerCase().includes('network')) {
+                progress.parentElement.classList.add('network');
               }
             }
           });
         };
 
-        // Enhance Admin Panel
-        const enhanceAdminPanel = () => {
-          if (!isAdmin || isInFileManager()) return;
-          
-          // Add admin badge to header
-          const header = document.querySelector('header');
-          if (header && !header.querySelector('.admin-badge')) {
-            const badge = document.createElement('div');
-            badge.className = 'admin-badge';
-            badge.innerHTML = `
-              <div style="
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                background: linear-gradient(90deg, rgba(10, 132, 255, 0.2), rgba(191, 90, 242, 0.2));
-                padding: 8px 16px;
-                border-radius: 12px;
-                border: 1px solid rgba(10, 132, 255, 0.3);
-              ">
-                <i class="fas fa-crown" style="color: #ff9f0a;"></i>
-                <span style="font-size: 13px; font-weight: 600;">Administrator Mode</span>
-              </div>
-            `;
-            header.appendChild(badge);
-          }
+        // ===== REPLACE COPYRIGHT TEXT =====
+        const replaceCopyright = () => {
+          // Replace Pterodactyl copyright
+          const walker = document.createTreeWalker(
+            document.body,
+            NodeFilter.SHOW_TEXT,
+            null,
+            false
+          );
 
-          // Add admin stats
-          const mainContent = document.querySelector('main');
-          if (mainContent && window.location.pathname.includes('/admin')) {
-            const stats = document.createElement('div');
-            stats.className = 'admin-stats';
-            stats.innerHTML = `
-              <div style="
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 16px;
-                margin-bottom: 24px;
-              ">
-                <div class="stat-box">
-                  <div class="stat-label"><i class="fas fa-server"></i> Total Servers</div>
-                  <div class="stat-value">${document.querySelectorAll('[href*="/server/"]').length}</div>
-                  <div class="stat-progress"><div class="stat-progress-bar" style="width: 75%"></div></div>
-                </div>
-                <div class="stat-box">
-                  <div class="stat-label"><i class="fas fa-users"></i> Active Users</div>
-                  <div class="stat-value">${document.querySelectorAll('[href*="/user/"]').length}</div>
-                  <div class="stat-progress"><div class="stat-progress-bar" style="width: 60%"></div></div>
-                </div>
-              </div>
-            `;
-            mainContent.insertBefore(stats, mainContent.firstChild);
+          let node;
+          while (node = walker.nextNode()) {
+            if (node.nodeType === 3) { // Text node
+              const text = node.nodeValue;
+              
+              // Replace Pterodactyl copyright
+              if (text.includes('Pterodactyl®') || 
+                  text.includes('© 2015 - 2026') || 
+                  text.includes('© 2015')) {
+                node.nodeValue = text
+                  .replace(/Pterodactyl®/g, 'RENDZZ Official')
+                  .replace(/© 2015 - 2026/g, '© 2024 RENDZZ Official')
+                  .replace(/© 2015/g, '© 2024');
+              }
+              
+              // Replace "no servers" message
+              if (text.includes('There are no servers associated with your account') ||
+                  text.includes('no servers') && text.includes('associated with your account')) {
+                const parent = node.parentElement;
+                if (parent && !parent.querySelector('.rendzz-no-server')) {
+                  const newDiv = document.createElement('div');
+                  newDiv.className = 'rendzz-no-server';
+                  newDiv.innerHTML = `
+                    <div style="text-align: center; padding: 3rem;">
+                      <i class="fas fa-server" style="font-size: 48px; color: #ff2e63; margin-bottom: 1rem;"></i>
+                      <h3 style="font-size: 24px; font-weight: 700; color: #ff2e63; margin-bottom: 1rem;">
+                        SERVER LU GAADA 🫢
+                      </h3>
+                      <p style="color: #aaaaaa; margin-bottom: 2rem;">
+                        Belum punya server? Create server baru sekarang!
+                      </p>
+                      <button style="
+                        background: linear-gradient(135deg, #00adb5, #008b94);
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 12px 24px;
+                        font-weight: 600;
+                        cursor: pointer;
+                      ">
+                        <i class="fas fa-plus"></i> Create Server
+                      </button>
+                    </div>
+                  `;
+                  
+                  // Replace parent content
+                  parent.innerHTML = '';
+                  parent.appendChild(newDiv);
+                  parent.style.background = 'var(--rendzz-card)';
+                  parent.style.borderRadius = '12px';
+                  parent.style.border = '2px dashed var(--rendzz-border)';
+                  parent.style.padding = '2rem';
+                }
+              }
+            }
           }
         };
 
-        // Run enhancements
+        // Run updates
         setTimeout(() => {
-          enhanceConsole();
-          enhanceAdminPanel();
-        }, 1500);
+          updateServerCards();
+          replaceCopyright();
+        }, 1000);
 
-        // Auto refresh console stats
-        if (window.location.pathname.includes('/server/')) {
+        // Auto refresh
+        if (window.location.pathname === '/') {
           setInterval(() => {
-            enhanceConsole();
+            updateServerCards();
           }, 5000);
         }
       });
@@ -685,322 +569,359 @@ cat > "$BASE_TEMPLATE" << 'EOF'
 @endsection
 EOF
 
-echo "✅ Base template updated with Premium iOS theme"
+echo "✅ Base template updated with RENDZZ theme"
 
-# ===== 2. UPDATE ADMIN LAYOUT SPECIFICALLY =====
+# ===== 2. UPDATE DASHBOARD NO SERVER MESSAGE =====
+log_info "Updating 'No Servers' message..."
+
+# Create a custom view for empty server state
+EMPTY_SERVER_VIEW="$PANEL_PATH/resources/views/templates/server/empty.blade.php"
+if [ ! -d "$(dirname "$EMPTY_SERVER_VIEW")" ]; then
+    mkdir -p "$(dirname "$EMPTY_SERVER_VIEW")"
+fi
+
+cat > "$EMPTY_SERVER_VIEW" << 'EOF'
+<div class="flex flex-col items-center justify-center px-6 py-12">
+    <div class="text-center max-w-md">
+        <div class="mb-6">
+            <i class="fas fa-server text-6xl text-[#ff2e63] mb-4"></i>
+            <h3 class="text-3xl font-bold text-[#ff2e63] mb-2">
+                SERVER LU GAADA 🫢
+            </h3>
+            <p class="text-gray-400 mb-6">
+                Belum punya server? Yuk bikin server baru buat main game atau hosting website!
+            </p>
+        </div>
+        
+        <div class="space-y-4">
+            <a href="/servers/create" 
+               class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-[#00adb5] to-[#008b94] text-white font-semibold rounded-lg hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1">
+                <i class="fas fa-plus mr-2"></i>
+                Create New Server
+            </a>
+            
+            <div class="text-sm text-gray-500 mt-4">
+                <i class="fas fa-info-circle mr-1"></i>
+                Need help? Contact administrator untuk bantuan
+            </div>
+        </div>
+    </div>
+</div>
+EOF
+
+echo "✅ Empty server view created"
+
+# ===== 3. UPDATE ADMIN LAYOUT WITH RENDZZ BRANDING =====
 ADMIN_ENHANCEMENTS="<style>
-/* Premium Admin Enhancements */
-.admin-dashboard {
-  background: transparent !important;
-  padding: 2rem !important;
+/* RENDZZ Admin Branding */
+footer div.text-center,
+footer .text-gray-500,
+footer .text-gray-600 {
+    color: #00adb5 !important;
+    font-weight: 600 !important;
 }
 
-/* Admin Stats Grid */
-.admin-stats-grid {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
-  gap: 24px !important;
-  margin-bottom: 2rem !important;
+footer div.text-center::after {
+    content: 'RENDZZ Official © 2024' !important;
+    display: block !important;
+    margin-top: 4px !important;
 }
 
-/* Admin Control Cards */
-.admin-control-card {
-  background: linear-gradient(145deg, rgba(28, 28, 30, 0.9), rgba(44, 44, 46, 0.9)) !important;
-  backdrop-filter: blur(30px) !important;
-  border: 1px solid rgba(10, 132, 255, 0.2) !important;
-  border-radius: 20px !important;
-  padding: 2rem !important;
-  margin-bottom: 1.5rem !important;
-  transition: all 0.3s ease !important;
+/* Admin Dashboard Enhancements */
+.admin-header h1 {
+    background: linear-gradient(90deg, #00adb5, #ff2e63) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    font-weight: 800 !important;
 }
 
-.admin-control-card:hover {
-  transform: translateY(-5px) !important;
-  border-color: rgba(10, 132, 255, 0.4) !important;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+.admin-stat-card {
+    background: linear-gradient(145deg, #1a1a2e, #16213e) !important;
+    border: 1px solid rgba(0, 173, 181, 0.3) !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    transition: all 0.3s ease !important;
 }
 
-/* Admin Navigation Enhancements */
-.admin-nav-section {
-  margin-bottom: 2rem !important;
+.admin-stat-card:hover {
+    transform: translateY(-5px) !important;
+    border-color: #00adb5 !important;
+    box-shadow: 0 12px 30px rgba(0, 173, 181, 0.2) !important;
 }
 
-.admin-nav-title {
-  color: var(--ios-text-secondary) !important;
-  font-size: 12px !important;
-  text-transform: uppercase !important;
-  letter-spacing: 1px !important;
-  margin-bottom: 1rem !important;
-  padding-left: 1rem !important;
+/* Server Status Colors in Admin */
+.bg-success-soft {
+    background: rgba(48, 209, 88, 0.1) !important;
+    color: #30d158 !important;
+    border: 1px solid rgba(48, 209, 88, 0.3) !important;
 }
 
-/* Admin Quick Actions */
-.admin-quick-actions {
-  display: flex !important;
-  gap: 12px !important;
-  flex-wrap: wrap !important;
-  margin-top: 1.5rem !important;
+.bg-danger-soft {
+    background: rgba(255, 55, 95, 0.1) !important;
+    color: #ff375f !important;
+    border: 1px solid rgba(255, 55, 95, 0.3) !important;
 }
 
-.admin-quick-action {
-  background: rgba(10, 132, 255, 0.1) !important;
-  border: 1px solid rgba(10, 132, 255, 0.3) !important;
-  border-radius: 12px !important;
-  padding: 12px 20px !important;
-  color: var(--ios-text-primary) !important;
-  text-decoration: none !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  transition: all 0.3s ease !important;
-}
-
-.admin-quick-action:hover {
-  background: rgba(10, 132, 255, 0.2) !important;
-  transform: translateY(-2px) !important;
-}
-
-/* Admin Status Indicators */
-.admin-status {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  padding: 4px 12px !important;
-  border-radius: 20px !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
-}
-
-.admin-status.online {
-  background: rgba(48, 209, 88, 0.2) !important;
-  color: var(--ios-green) !important;
-  border: 1px solid rgba(48, 209, 88, 0.3) !important;
-}
-
-.admin-status.offline {
-  background: rgba(255, 55, 95, 0.2) !important;
-  color: var(--ios-red) !important;
-  border: 1px solid rgba(255, 55, 95, 0.3) !important;
-}
-
-.admin-status.warning {
-  background: rgba(255, 159, 10, 0.2) !important;
-  color: var(--ios-orange) !important;
-  border: 1px solid rgba(255, 159, 10, 0.3) !important;
+.bg-warning-soft {
+    background: rgba(255, 159, 10, 0.1) !important;
+    color: #ff9f0a !important;
+    border: 1px solid rgba(255, 159, 10, 0.3) !important;
 }
 </style>
 
 <script>
-// Admin Panel Auto Refresh
-if (window.location.pathname.includes('/admin')) {
-  // Auto refresh stats every 10 seconds
-  setInterval(() => {
-    const statsElements = document.querySelectorAll('.stat-value');
-    statsElements.forEach(el => {
-      el.style.opacity = '0.7';
-      setTimeout(() => {
-        el.style.opacity = '1';
-      }, 300);
-    });
-  }, 10000);
-  
-  // Add admin panel shortcuts
-  document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.key === 'd') {
-      // Ctrl+D for dashboard
-      window.location.href = '/admin';
+// Replace Pterodactyl branding in admin panel
+document.addEventListener('DOMContentLoaded', function() {
+    // Replace copyright text
+    const replaceText = (element, search, replace) => {
+        if (element.textContent.includes(search)) {
+            element.textContent = element.textContent.replace(search, replace);
+        }
+    };
+    
+    // Replace in all text nodes
+    const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+    );
+    
+    let node;
+    while (node = walker.nextNode()) {
+        replaceText(node, 'Pterodactyl®', 'RENDZZ Official');
+        replaceText(node, '© 2015 - 2026', '© 2024 RENDZZ Official');
+        replaceText(node, 'Pterodactyl Panel', 'RENDZZ Panel');
     }
-    if (e.ctrlKey && e.key === 's') {
-      // Ctrl+S for servers
-      window.location.href = '/admin/servers';
+    
+    // Add RENDZZ badge to admin header
+    const header = document.querySelector('header');
+    if (header && !header.querySelector('.rendzz-badge')) {
+        const badge = document.createElement('div');
+        badge.className = 'rendzz-badge';
+        badge.innerHTML = \`
+            <div style="
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                background: linear-gradient(90deg, rgba(0, 173, 181, 0.2), rgba(255, 46, 99, 0.2));
+                padding: 6px 12px;
+                border-radius: 20px;
+                border: 1px solid rgba(0, 173, 181, 0.3);
+                font-size: 12px;
+                font-weight: 600;
+                color: #00adb5;
+            ">
+                <i class="fas fa-shield-alt"></i>
+                RENDZZ Official
+            </div>
+        \`;
+        header.appendChild(badge);
     }
-    if (e.ctrlKey && e.key === 'u') {
-      // Ctrl+U for users
-      window.location.href = '/admin/users';
-    }
-  });
-}
+});
 </script>"
 
 # Apply to admin layout
 if [ -f "$ADMIN_LAYOUT" ]; then
-  sed -i "/<\/head>/i $ADMIN_ENHANCEMENTS" "$ADMIN_LAYOUT"
-  echo "✅ Admin layout enhanced with premium features"
+    sed -i "/<\/head>/i $ADMIN_ENHANCEMENTS" "$ADMIN_LAYOUT"
+    echo "✅ Admin layout updated with RENDZZ branding"
 fi
 
-# ===== 3. UPDATE AUTH LAYOUT (LOGIN PAGE) =====
+# ===== 4. UPDATE AUTH LAYOUT =====
 AUTH_CSS="<style>
-/* Premium Login Page */
+/* RENDZZ Login Page */
 body:not(.in-file-manager) #app > div {
-  background: 
-    radial-gradient(ellipse at 30% 30%, rgba(10, 132, 255, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 70% 70%, rgba(191, 90, 242, 0.15) 0%, transparent 50%),
-    linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,20,30,0.9) 100%),
-    url('${BG_IMAGE}') !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-attachment: fixed !important;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Animated particles */
-body:not(.in-file-manager) #app > div::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 30%, rgba(10, 132, 255, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 80% 40%, rgba(191, 90, 242, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 40% 70%, rgba(48, 209, 88, 0.05) 0%, transparent 40%);
-  animation: particleFloat 20s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes particleFloat {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(10px, -10px); }
+    background: linear-gradient(135deg, #0a0a0f 0%, #16213e 100%), url('${BG_IMAGE}') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Login Card */
 body:not(.in-file-manager) .bg-white,
 body:not(.in-file-manager) .bg-gray-100 {
-  background: rgba(28, 28, 30, 0.95) !important;
-  backdrop-filter: blur(50px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(50px) saturate(200%) !important;
-  border: 1px solid rgba(56, 56, 58, 0.6) !important;
-  border-radius: 28px !important;
-  padding: 3rem !important;
-  max-width: 440px !important;
-  width: 90% !important;
-  margin: 2rem !important;
-  box-shadow: 
-    0 30px 80px rgba(0,0,0,0.6),
-    0 0 100px rgba(10, 132, 255, 0.15),
-    inset 0 1px 0 rgba(255,255,255,0.1) !important;
-  position: relative;
-  z-index: 1;
+    background: rgba(26, 26, 46, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(0, 173, 181, 0.3) !important;
+    border-radius: 16px !important;
+    padding: 2.5rem !important;
+    max-width: 400px !important;
+    width: 90% !important;
+    margin: 2rem !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5) !important;
 }
 
-/* Login Title Animation */
+/* Login Title */
 body:not(.in-file-manager) .text-2xl,
 body:not(.in-file-manager) .text-3xl {
-  background: linear-gradient(90deg, #0a84ff, #5ac8fa, #bf5af2, #5ac8fa, #0a84ff) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-size: 300% auto !important;
-  animation: gradientFlow 4s ease infinite !important;
-  font-weight: 900 !important;
-  letter-spacing: -0.5px !important;
-  text-align: center !important;
-  margin-bottom: 2.5rem !important;
-  font-size: 2.5rem !important;
+    background: linear-gradient(90deg, #00adb5, #ff2e63) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    font-weight: 800 !important;
+    text-align: center !important;
+    margin-bottom: 2rem !important;
 }
 
-@keyframes gradientFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Login Button Premium */
+/* Login Button */
 body:not(.in-file-manager) button[type=\"submit\"] {
-  width: 100% !important;
-  margin-top: 2rem !important;
-  font-size: 18px !important;
-  padding: 20px !important;
-  border-radius: 16px !important;
-  background: linear-gradient(135deg, #0a84ff, #007aff, #0056d6) !important;
-  position: relative;
-  overflow: hidden;
+    width: 100% !important;
+    background: linear-gradient(135deg, #00adb5, #008b94) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 14px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
 }
 
-body:not(.in-file-manager) button[type=\"submit\"]::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.7s;
-}
-
-body:not(.in-file-manager) button[type=\"submit\"]:hover::before {
-  left: 100%;
+body:not(.in-file-manager) button[type=\"submit\"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(0, 173, 181, 0.3) !important;
 }
 
 /* Copyright */
 body:not(.in-file-manager) .text-center.text-xs.text-gray-500::after {
-  content: '© 2024 Rendzz Official • Premium iOS Theme v2.0';
-  color: rgba(142, 142, 147, 0.8) !important;
-  font-size: 12px !important;
-  margin-top: 2.5rem !important;
-  display: block;
-  letter-spacing: 0.5px;
+    content: 'RENDZZ Official © 2024' !important;
+    color: #00adb5 !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    margin-top: 2rem !important;
+    display: block;
 }
 </style>"
 
 sed -i "/<\/head>/i $AUTH_CSS" "$AUTH_LAYOUT"
-echo "✅ Auth layout updated with premium login design"
+echo "✅ Auth layout updated"
 
-# ===== 4. ADD FONTS =====
-FONT_LINK='<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">'
+# ===== 5. UPDATE APP LAYOUT =====
+APP_UPDATES="<style>
+/* Server status colors */
+.status-badge {
+    padding: 4px 12px !important;
+    border-radius: 20px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
 
-sed -i "/<\/head>/i $FONT_LINK" "$AUTH_LAYOUT"
-sed -i "/<\/head>/i $FONT_LINK" "$APP_LAYOUT"
-sed -i "/<\/head>/i $FONT_LINK" "$ADMIN_LAYOUT"
-echo "✅ Premium fonts added"
+.status-badge.online {
+    background: rgba(48, 209, 88, 0.1) !important;
+    color: #30d158 !important;
+    border: 1px solid rgba(48, 209, 88, 0.3) !important;
+}
 
-# ===== 5. PERMISSIONS =====
-chown -R www-data:www-data "$PANEL_PATH"
+.status-badge.offline {
+    background: rgba(255, 55, 95, 0.1) !important;
+    color: #ff375f !important;
+    border: 1px solid rgba(255, 55, 95, 0.3) !important;
+}
 
-# ===== 6. CLEAR CACHE =====
+/* Empty state */
+.empty-state {
+    text-align: center !important;
+    padding: 3rem 1rem !important;
+    background: #1a1a2e !important;
+    border-radius: 12px !important;
+    border: 2px dashed rgba(0, 173, 181, 0.3) !important;
+    margin: 2rem auto !important;
+}
+
+.empty-state h3 {
+    color: #ff2e63 !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Footer copyright */
+footer div:contains('©') {
+    color: #00adb5 !important;
+    font-weight: 600 !important;
+}
+</style>
+
+<script>
+// Update server status badges
+document.addEventListener('DOMContentLoaded', function() {
+    // Update status badges
+    document.querySelectorAll('.bg-success, .status-online').forEach(el => {
+        el.className = 'status-badge online';
+        el.innerHTML = '<i class="fas fa-circle"></i> Online';
+    });
+    
+    document.querySelectorAll('.bg-danger, .status-offline').forEach(el => {
+        el.className = 'status-badge offline';
+        el.innerHTML = '<i class="fas fa-circle"></i> Offline';
+    });
+    
+    // Replace copyright
+    const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+    );
+    
+    let node;
+    while (node = walker.nextNode()) {
+        if (node.nodeValue.includes('Pterodactyl') || 
+            node.nodeValue.includes('© 2015')) {
+            node.nodeValue = node.nodeValue
+                .replace(/Pterodactyl®/g, 'RENDZZ Official')
+                .replace(/© 2015 - 2026/g, '© 2024 RENDZZ Official');
+        }
+    }
+});
+</script>"
+
+sed -i "/<\/head>/i $APP_UPDATES" "$APP_LAYOUT"
+echo "✅ App layout updated"
+
+# ===== 6. UPDATE JAVASCRIPT FILES =====
+log_info "Updating JavaScript files for copyright replacement..."
+
+# Find and replace copyright in JS files
+find "$PANEL_PATH" -name "*.js" -type f | while read -r js_file; do
+    if grep -q "Pterodactyl\|© 2015" "$js_file" 2>/dev/null; then
+        sed -i 's/Pterodactyl®/RENDZZ Official/g' "$js_file"
+        sed -i 's/© 2015 - 2026/© 2024 RENDZZ Official/g' "$js_file"
+        sed -i 's/Pterodactyl Panel/RENDZZ Panel/g' "$js_file"
+        echo "Updated: $(basename "$js_file")"
+    fi
+done
+
+# ===== 7. CLEAR CACHE =====
+log_info "Clearing cache..."
 cd "$PANEL_PATH" || exit
-php artisan view:clear
-php artisan cache:clear
-php artisan config:clear
-php artisan route:clear
+php artisan view:clear > /dev/null 2>&1
+php artisan cache:clear > /dev/null 2>&1
+php artisan config:clear > /dev/null 2>&1
 
+echo ""
 echo "========================================="
-echo "🚀 PREMIUM iOS THEME UPDATED SUCCESSFULLY!"
+echo "🚀 RENDZZ OFFICIAL THEME UPDATED!"
 echo "========================================="
-echo "💎 PREMIUM FEATURES INCLUDED:"
-echo "• Dynamic Animated Backgrounds"
-echo "• Premium Console with Terminal UI"
-echo "• Animated Stats Cards with Progress Bars"
-echo "• Admin Panel with Crown Badge"
-echo "• Live Data Animations"
-echo "• Gradient Text Effects"
-echo "• Enhanced Server Statistics"
-echo "• Quick Action Shortcuts"
-echo "• File Manager 100% Original"
-echo "• RENSTR Branding Throughout"
-echo "========================================="
-echo "🎮 Console Features:"
-echo "  ✓ Terminal-style interface"
-echo "  ✓ Live status indicators"
-echo "  ✓ Animated progress bars"
-echo "  ✓ Real-time data updates"
-echo "  ✓ Custom RENSTR branding"
-echo "========================================="
-echo "👑 Admin Features:"
-echo "  ✓ Administrator badge"
-echo "  ✓ Quick stats dashboard"
-echo "  ✓ Enhanced navigation"
-echo "  ✓ Keyboard shortcuts"
-echo "  ✓ Status indicators"
-echo "========================================="
-echo "🔄 Please refresh your browser!"
+echo "🎨 CHANGES APPLIED:"
+echo "  ✓ Server cards with status colors"
+echo "  ✓ Pterodactyl → RENDZZ Official branding"
+echo "  ✓ 'No servers' message → 'SERVER LU GAADA 🫢'"
+echo "  ✓ Custom empty server state"
+echo "  ✓ Admin panel RENDZZ branding"
+echo "  ✓ Login page updates"
+echo "  ✓ Server status color coding"
+echo "  ✓ Copyright replaced everywhere"
+echo ""
+echo "🎯 SERVER STATUS COLORS:"
+echo "  • Online: Green (#30d158)"
+echo "  • Offline: Red (#ff375f)"
+echo "  • Starting: Orange (#ff9f0a)"
+echo "  • Installing: Blue (#64d2ff)"
+echo ""
+echo "🔄 Refresh your browser to see changes!"
 echo "========================================="
