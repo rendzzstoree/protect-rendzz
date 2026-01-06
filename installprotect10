@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🎨 Installing iOS Dark Theme with Greeting Message..."
+echo "🎨 Updating iOS Dark Theme with Custom Background..."
 
 PANEL_PATH="/var/www/pterodactyl"
 BASE_TEMPLATE="$PANEL_PATH/resources/views/templates/base/core.blade.php"
@@ -8,13 +8,16 @@ AUTH_LAYOUT="$PANEL_PATH/resources/views/layouts/auth.blade.php"
 APP_LAYOUT="$PANEL_PATH/resources/views/layouts/app.blade.php"
 TIMESTAMP=$(date -u +"%Y-%m-%d-%H-%M-%S")
 
+# Background Image URL
+BG_IMAGE="https://files.catbox.moe/z32ox4.jpg"
+
 # ===== BACKUP =====
 cp "$BASE_TEMPLATE" "${BASE_TEMPLATE}.bak_${TIMESTAMP}"
 cp "$AUTH_LAYOUT" "${AUTH_LAYOUT}.bak_${TIMESTAMP}"
 cp "$APP_LAYOUT" "${APP_LAYOUT}.bak_${TIMESTAMP}"
 echo "📦 Backup semua file OK"
 
-# ===== 1. UPDATE BASE TEMPLATE (GREETING MESSAGE) =====
+# ===== 1. UPDATE BASE TEMPLATE (GREETING MESSAGE + iOS THEME) =====
 cat > "$BASE_TEMPLATE" << 'EOF'
 @extends('templates/wrapper', [
     'css' => ['body' => 'bg-neutral-800'],
@@ -29,98 +32,321 @@ cat > "$BASE_TEMPLATE" << 'EOF'
     /* ===== iOS DARK THEME - RENSTR EDITION ===== */
     :root {
       --ios-bg: #000000;
-      --ios-card: #1c1c1e;
-      --ios-card-secondary: #2c2c2e;
-      --ios-surface: #3a3a3c;
+      --ios-card: rgba(28, 28, 30, 0.85);
+      --ios-card-secondary: rgba(44, 44, 46, 0.9);
+      --ios-surface: rgba(58, 58, 60, 0.8);
       --ios-blue: #0a84ff;
       --ios-blue-light: #5ac8fa;
       --ios-green: #30d158;
       --ios-red: #ff375f;
       --ios-purple: #bf5af2;
+      --ios-orange: #ff9f0a;
       --ios-text-primary: #ffffff;
       --ios-text-secondary: #8e8e93;
       --ios-text-tertiary: #636366;
-      --ios-border: #38383a;
-      --ios-blur: rgba(28,28,30,0.65);
-      --ios-shadow: 0 8px 32px rgba(0,0,0,0.28);
+      --ios-border: rgba(56, 56, 58, 0.6);
+      --ios-blur: rgba(28, 28, 30, 0.75);
+      --ios-shadow: 0 10px 40px rgba(0,0,0,0.35);
+      --ios-glow: 0 0 40px rgba(10, 132, 255, 0.15);
     }
 
     /* iOS Theme Global Styles */
     body {
-      background: var(--ios-bg) !important;
+      background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.9)), url('https://files.catbox.moe/z32ox4.jpg') !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-attachment: fixed !important;
+      background-repeat: no-repeat !important;
       color: var(--ios-text-primary) !important;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif !important;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Inter", sans-serif !important;
       margin: 0;
       padding: 0;
+      min-height: 100vh;
+      position: relative;
     }
 
-    /* iOS Cards */
-    .bg-white, .bg-gray-100, .card, .panel {
+    /* Background Overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(10, 132, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(191, 90, 242, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(255, 55, 95, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* iOS Cards - Glassmorphism Effect */
+    .bg-white, .bg-gray-100, .card, .panel, .dashboard-card {
       background: var(--ios-card) !important;
+      backdrop-filter: blur(25px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
       border: 1px solid var(--ios-border) !important;
-      border-radius: 18px !important;
+      border-radius: 20px !important;
       color: var(--ios-text-primary) !important;
-      box-shadow: var(--ios-shadow) !important;
-      margin-bottom: 1rem !important;
-      transition: all 0.3s ease !important;
+      box-shadow: var(--ios-shadow), var(--ios-glow) !important;
+      margin-bottom: 1.5rem !important;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      overflow: hidden !important;
+    }
+
+    .bg-white:hover, .bg-gray-100:hover, .card:hover {
+      transform: translateY(-4px) !important;
+      border-color: rgba(10, 132, 255, 0.4) !important;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.4), 0 0 60px rgba(10, 132, 255, 0.2) !important;
     }
 
     /* iOS Buttons */
     button, .btn, [type="submit"] {
-      background: var(--ios-blue) !important;
+      background: linear-gradient(135deg, #0a84ff, #007aff) !important;
       color: white !important;
       border: none !important;
-      border-radius: 12px !important;
-      padding: 14px 24px !important;
+      border-radius: 14px !important;
+      padding: 16px 28px !important;
       font-size: 17px !important;
       font-weight: 600 !important;
       cursor: pointer !important;
-      transition: all 0.2s ease !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      letter-spacing: 0.2px !important;
+      position: relative;
+      overflow: hidden;
     }
 
-    button:hover, .btn:hover {
-      background: #007aff !important;
-      transform: translateY(-1px) !important;
-      box-shadow: 0 8px 24px rgba(10, 132, 255, 0.3) !important;
+    button::after, .btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.7s;
+    }
+
+    button:hover::after, .btn:hover::after {
+      left: 100%;
+    }
+
+    button:hover, .btn:hover, [type="submit"]:hover {
+      background: linear-gradient(135deg, #007aff, #0056d6) !important;
+      transform: translateY(-2px) scale(1.02) !important;
+      box-shadow: 0 12px 30px rgba(10, 132, 255, 0.4) !important;
     }
 
     /* iOS Inputs */
     input, select, textarea {
       background: var(--ios-card-secondary) !important;
-      border: 1px solid var(--ios-border) !important;
-      border-radius: 12px !important;
+      border: 1.5px solid var(--ios-border) !important;
+      border-radius: 14px !important;
       color: var(--ios-text-primary) !important;
-      padding: 12px 16px !important;
+      padding: 14px 18px !important;
       font-size: 17px !important;
+      transition: all 0.3s ease !important;
+      backdrop-filter: blur(10px) !important;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--ios-blue) !important;
+      box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.2) !important;
+      outline: none !important;
+      background: rgba(28, 28, 30, 0.95) !important;
+      transform: translateY(-1px) !important;
     }
 
     /* Header iOS */
-    .bg-gray-800 {
+    .bg-gray-800, header, .navbar {
       background: var(--ios-blur) !important;
-      backdrop-filter: blur(20px) !important;
+      backdrop-filter: blur(30px) saturate(200%) !important;
+      -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
       border-bottom: 1px solid var(--ios-border) !important;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.3) !important;
     }
 
     /* Status Colors */
-    .bg-success { background: var(--ios-green) !important; }
-    .bg-danger { background: var(--ios-red) !important; }
-    .bg-primary { background: var(--ios-blue) !important; }
+    .bg-success, .status-online { 
+      background: linear-gradient(135deg, var(--ios-green), #25c748) !important;
+      color: white !important;
+    }
+    
+    .bg-danger, .status-offline { 
+      background: linear-gradient(135deg, var(--ios-red), #ff2d55) !important;
+      color: white !important;
+    }
+    
+    .bg-primary, .status-active { 
+      background: linear-gradient(135deg, var(--ios-blue), #007aff) !important;
+      color: white !important;
+    }
+    
+    .bg-warning { 
+      background: linear-gradient(135deg, var(--ios-orange), #ff8a00) !important;
+      color: white !important;
+    }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: var(--ios-card); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb { background: var(--ios-surface); border-radius: 4px; }
+    /* Scrollbar iOS Style */
+    ::-webkit-scrollbar { 
+      width: 10px; 
+      height: 10px; 
+    }
+    
+    ::-webkit-scrollbar-track { 
+      background: rgba(0,0,0,0.3); 
+      border-radius: 10px;
+      margin: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb { 
+      background: linear-gradient(180deg, var(--ios-blue), var(--ios-purple)) !important;
+      border-radius: 10px;
+      border: 2px solid rgba(0,0,0,0.3);
+    }
+    
+    ::-webkit-scrollbar-thumb:hover { 
+      background: linear-gradient(180deg, #007aff, #bf5af2) !important;
+    }
+
+    /* Table Styling */
+    table {
+      background: var(--ios-card-secondary) !important;
+      backdrop-filter: blur(20px) !important;
+      border-radius: 16px !important;
+      overflow: hidden !important;
+      border: 1px solid var(--ios-border) !important;
+    }
+
+    th {
+      background: rgba(58, 58, 60, 0.7) !important;
+      color: var(--ios-text-primary) !important;
+      font-weight: 600 !important;
+      padding: 16px !important;
+      border-bottom: 1px solid var(--ios-border) !important;
+    }
+
+    td {
+      padding: 14px 16px !important;
+      border-bottom: 1px solid rgba(56, 56, 58, 0.4) !important;
+      color: var(--ios-text-secondary) !important;
+      transition: all 0.2s ease !important;
+    }
+
+    tr:hover td {
+      background: rgba(10, 132, 255, 0.05) !important;
+      color: var(--ios-text-primary) !important;
+    }
 
     /* Footer Custom */
+    .text-center.text-xs.text-gray-500 {
+      font-size: 0 !important;
+    }
+    
     .text-center.text-xs.text-gray-500::after {
-      content: "RENSTR • iOS Dark Theme";
-      color: var(--ios-text-tertiary) !important;
+      content: "© Rendzz Official • iOS Dark Theme";
       font-size: 13px !important;
+      color: var(--ios-text-tertiary) !important;
+      letter-spacing: 0.3px !important;
+      opacity: 0.8;
+    }
+
+    /* Server Status Dots */
+    .status-dot::before {
+      content: '●';
+      font-size: 12px;
+      margin-right: 6px;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      border: 3px solid rgba(10, 132, 255, 0.3);
+      border-top: 3px solid var(--ios-blue);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Notification Badges */
+    .badge {
+      background: linear-gradient(135deg, var(--ios-red), #ff2d55) !important;
+      border-radius: 12px !important;
+      padding: 4px 12px !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      animation: badgePulse 2s infinite;
+    }
+    
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* Form Labels */
+    label {
+      color: var(--ios-text-secondary) !important;
+      font-size: 15px !important;
+      font-weight: 500 !important;
+      margin-bottom: 8px !important;
+      display: block;
+    }
+
+    /* Sidebar Navigation */
+    nav a {
+      color: var(--ios-text-secondary) !important;
+      border-radius: 14px !important;
+      margin: 6px 10px !important;
+      padding: 14px 18px !important;
+      transition: all 0.3s ease !important;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    nav a:hover {
+      background: rgba(10, 132, 255, 0.15) !important;
+      color: var(--ios-text-primary) !important;
+      transform: translateX(4px) !important;
+    }
+
+    nav a.active {
+      background: linear-gradient(90deg, rgba(10, 132, 255, 0.2), rgba(10, 132, 255, 0.1)) !important;
+      color: var(--ios-blue) !important;
+      border-left: 3px solid var(--ios-blue) !important;
+    }
+
+    /* Progress Bars */
+    .progress {
+      background: var(--ios-surface) !important;
+      border-radius: 10px !important;
+      height: 10px !important;
+      overflow: hidden !important;
+    }
+
+    .progress-bar {
+      background: linear-gradient(90deg, var(--ios-blue), var(--ios-purple)) !important;
+      border-radius: 10px !important;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
     </style>
 
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- SF Pro Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -129,129 +355,236 @@ cat > "$BASE_TEMPLATE" << 'EOF'
         // Create iOS-style greeting message
         const message = document.createElement("div");
         message.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-moon" style="color: #0a84ff; font-size: 16px;"></i>
-            <span>Halo, <strong>${username}</strong>! 👋</span>
-          </div>
-          <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">
-            Welcome to iOS Dark Theme
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="
+              width: 40px;
+              height: 40px;
+              background: linear-gradient(135deg, #0a84ff, #bf5af2);
+              border-radius: 12px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 18px;
+              color: white;
+            ">
+              <i class="fas fa-cube"></i>
+            </div>
+            <div>
+              <div style="font-weight: 600; font-size: 15px;">Welcome, <strong>${username}</strong>! 👋</div>
+              <div style="font-size: 12px; opacity: 0.8; margin-top: 2px;">
+                © Rendzz Official • All Rights Reserved
+              </div>
+            </div>
           </div>
         `;
         
         Object.assign(message.style, {
           position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          background: "var(--ios-card, rgba(28,28,30,0.9))",
-          color: "var(--ios-text-primary, #ffffff)",
-          padding: "15px 20px",
-          borderRadius: "16px",
-          fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+          bottom: "25px",
+          right: "25px",
+          background: "rgba(28, 28, 30, 0.9)",
+          backdropFilter: "blur(30px) saturate(180%)",
+          WebkitBackdropFilter: "blur(30px) saturate(180%)",
+          color: "#ffffff",
+          padding: "18px 22px",
+          borderRadius: "20px",
+          fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif",
           fontSize: "14px",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.28)",
-          border: "1px solid var(--ios-border, #38383a)",
-          backdropFilter: "blur(20px)",
+          boxShadow: "0 15px 40px rgba(0,0,0,0.4), 0 0 50px rgba(10, 132, 255, 0.15)",
+          border: "1px solid rgba(56, 56, 58, 0.6)",
           zIndex: "99999",
-          opacity: "1",
-          transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-          maxWidth: "300px",
-          transform: "translateY(0)"
+          opacity: "0",
+          transform: "translateY(100px) scale(0.9)",
+          transition: "all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          maxWidth: "320px",
+          cursor: "pointer",
         });
 
         document.body.appendChild(message);
         
-        // Auto-hide after 4 seconds
+        // Animate in
         setTimeout(() => {
-          message.style.transform = "translateY(100px)";
+          message.style.opacity = "1";
+          message.style.transform = "translateY(0) scale(1)";
+        }, 500);
+        
+        // Auto-hide after 6 seconds
+        setTimeout(() => {
           message.style.opacity = "0";
-        }, 4000);
+          message.style.transform = "translateY(100px) scale(0.9)";
+        }, 6000);
         
         setTimeout(() => {
           if (message.parentNode) {
             message.remove();
           }
-        }, 5000);
+        }, 7000);
 
         // Add click to dismiss
         message.addEventListener("click", () => {
-          message.style.transform = "translateY(100px)";
           message.style.opacity = "0";
-          setTimeout(() => message.remove(), 500);
+          message.style.transform = "translateY(100px) scale(0.9)";
+          setTimeout(() => {
+            if (message.parentNode) {
+              message.remove();
+            }
+          }, 500);
         });
+
+        // Add iOS-style icon replacements
+        const replaceIcons = () => {
+          // Server icons
+          document.querySelectorAll('.fa-server').forEach(icon => {
+            icon.className = 'fas fa-cube';
+          });
+          
+          // Database icons
+          document.querySelectorAll('.fa-database').forEach(icon => {
+            icon.className = 'fas fa-layer-group';
+          });
+          
+          // User icons
+          document.querySelectorAll('.fa-user').forEach(icon => {
+            icon.className = 'fas fa-user-circle';
+          });
+          
+          // Settings icons
+          document.querySelectorAll('.fa-cog').forEach(icon => {
+            icon.className = 'fas fa-sliders-h';
+          });
+          
+          // Power icons
+          document.querySelectorAll('.fa-power-off').forEach(icon => {
+            icon.className = 'fas fa-bolt';
+          });
+        };
+
+        // Run icon replacement
+        setTimeout(replaceIcons, 1000);
+        setInterval(replaceIcons, 5000);
       });
     </script>
 @endsection
 EOF
 
-echo "✅ Base template updated with iOS theme"
+echo "✅ Base template updated with iOS theme and background"
 
 # ===== 2. UPDATE AUTH LAYOUT (LOGIN PAGE) =====
-AUTH_CSS='<style>
+AUTH_CSS="<style>
 /* Login Page Specific iOS Styles */
 #app > div {
-  background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%) !important;
+  background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.85)), url('${BG_IMAGE}') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
   position: relative;
-  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #app > div::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 20% 80%, rgba(10, 132, 255, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(191, 90, 242, 0.08) 0%, transparent 50%);
+    radial-gradient(circle at 30% 30%, rgba(10, 132, 255, 0.1) 0%, transparent 60%),
+    radial-gradient(circle at 70% 70%, rgba(191, 90, 242, 0.1) 0%, transparent 60%);
   pointer-events: none;
 }
 
 /* Login Card Enhancement */
 .bg-white, .bg-gray-100 {
-  background: rgba(28, 28, 30, 0.85) !important;
-  backdrop-filter: blur(30px) !important;
-  -webkit-backdrop-filter: blur(30px) !important;
+  background: rgba(28, 28, 30, 0.9) !important;
+  backdrop-filter: blur(40px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
+  border: 1px solid rgba(56, 56, 58, 0.5) !important;
+  border-radius: 24px !important;
+  padding: 2.5rem !important;
+  max-width: 420px !important;
+  width: 90% !important;
+  margin: 2rem !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 80px rgba(10, 132, 255, 0.1) !important;
 }
 
 /* Login Title */
 .text-2xl, .text-3xl {
-  background: linear-gradient(90deg, #0a84ff, #5ac8fa) !important;
+  background: linear-gradient(90deg, #0a84ff, #5ac8fa, #bf5af2) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  font-weight: 700 !important;
+  background-size: 200% auto !important;
+  animation: gradientShift 3s ease infinite !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.5px !important;
+  text-align: center !important;
+  margin-bottom: 2rem !important;
 }
-</style>'
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Login Button */
+button[type=\"submit\"] {
+  width: 100% !important;
+  margin-top: 1.5rem !important;
+  font-size: 18px !important;
+  padding: 18px !important;
+}
+
+/* Login Footer */
+.text-center.text-xs.text-gray-500::after {
+  content: '© Rendzz Official • iOS Dark Theme';
+  color: rgba(142, 142, 147, 0.7) !important;
+  font-size: 12px !important;
+  margin-top: 2rem !important;
+  display: block;
+}
+</style>"
 
 sed -i "/<\/head>/i $AUTH_CSS" "$AUTH_LAYOUT"
 
-# ===== 3. ADD FONT TO ALL PAGES =====
+# ===== 3. ADD FONTS TO ALL PAGES =====
 FONT_LINK='<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">'
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">'
 
 sed -i "/<\/head>/i $FONT_LINK" "$AUTH_LAYOUT"
 sed -i "/<\/head>/i $FONT_LINK" "$APP_LAYOUT"
 
-# ===== 4. PERMISSIONS =====
+# ===== 4. UPDATE APP LAYOUT (Dashboard) =====
+sed -i "/<\/head>/i $AUTH_CSS" "$APP_LAYOUT"
+
+# ===== 5. PERMISSIONS =====
 chown -R www-data:www-data "$PANEL_PATH"
 
-# ===== 5. CLEAR CACHE =====
+# ===== 6. CLEAR CACHE =====
 cd "$PANEL_PATH" || exit
 php artisan view:clear
 php artisan cache:clear
 php artisan config:clear
+php artisan route:clear
 
 echo "========================================="
-echo "🎉 iOS DARK THEME + GREETING INSTALLED!"
+echo "🎉 iOS DARK THEME UPDATED SUCCESSFULLY!"
 echo "========================================="
 echo "✨ Features included:"
-echo "• Full iOS Dark Mode design"
-• Greeting message with user name
-• Glassmorphism effects
-• Smooth animations
-• Custom status colors
-• Font Awesome icons
-• Auto-dismiss notification
-• Click-to-dismiss functionality
+echo "• Custom Background: $BG_IMAGE"
+echo "• iOS Glassmorphism Design"
+echo "• Welcome Message with User Name"
+echo "• All iOS Icons (Anti Tuldian)"
+echo "• Smooth Animations & Transitions"
+echo "• Gradient Buttons & Cards"
+echo "• Scrollbar Styling"
+echo "• Status Indicators"
+echo "• © Rendzz Official Copyright"
+echo "========================================="
+echo "🔄 Please refresh your browser to see changes!"
 echo "========================================="
