@@ -1,48 +1,106 @@
+
 #!/bin/bash
 
-echo "🚀 Ganti tulisan & background Pterodactyl..."
+echo "🔥 FORCE override login background & dashboard background (FULL FIX)..."
 
 PANEL_PATH="/var/www/pterodactyl"
-LOGIN_VIEW="$PANEL_PATH/resources/views/auth/login.blade.php"
 AUTH_LAYOUT="$PANEL_PATH/resources/views/layouts/auth.blade.php"
+APP_LAYOUT="$PANEL_PATH/resources/views/layouts/app.blade.php"
 
-IMAGE_URL="https://files.catbox.moe/j8860d.jpg"
+# ===== KONFIGURASI =====
+LOGIN_IMAGE_URL="https://files.catbox.moe/j8860d.jpg"
+DASHBOARD_IMAGE_URL="https://files.catbox.moe/j8860d.jpg"  # Ganti URL ini untuk background dashboard
 NEW_TEXT="RENSTR!"
 TIMESTAMP=$(date -u +"%Y-%m-%d-%H-%M-%S")
 
-# ===== BACKUP =====
-cp "$LOGIN_VIEW" "$LOGIN_VIEW.bak_$TIMESTAMP"
+# ===== BACKUP SEMUA =====
 cp "$AUTH_LAYOUT" "$AUTH_LAYOUT.bak_$TIMESTAMP"
-echo "📦 Backup aman"
+cp "$APP_LAYOUT" "$APP_LAYOUT.bak_$TIMESTAMP"
+echo "📦 Backup semua layout OK"
 
-# ===== GANTI TULISAN =====
-sed -i 's/Pterodactyl Software/'"$NEW_TEXT"'/g' "$LOGIN_VIEW"
-echo "✏️ Tulisan diganti jadi $NEW_TEXT"
-
-# ===== OVERRIDE BACKGROUND ORIGINAL =====
+# ===== 1. FIX AUTH LAYOUT (LOGIN) =====
 sed -i '/<\/head>/i \
 <style>\n\
-/* === FORCE BACKGROUND LOGIN (RENSTR) === */\n\
-html, body {\n\
-  background: url("'"$IMAGE_URL"'") no-repeat center center fixed !important;\n\
+/* ===== RENSTR REAL OVERRIDE ===== */\n\
+\n\
+/* CONTAINER ASLI LOGIN */\n\
+#app > div {\n\
+  background: url("'"$LOGIN_IMAGE_URL"'") no-repeat center center fixed !important;\n\
   background-size: cover !important;\n\
 }\n\
-.bg-neutral-900,\n\
-.bg-neutral-800,\n\
-.bg-gray-900,\n\
-.bg-gray-800 {\n\
-  background-color: rgba(0,0,0,0.65) !important;\n\
+\n\
+/* GELAPIN CARD LOGIN BIAR KECE */\n\
+.bg-white,\n\
+.bg-gray-100 {\n\
+  background: rgba(0,0,0,0.65) !important;\n\
+  color: #fff !important;\n\
+}\n\
+\n\
+/* HILANGKAN COPYRIGHT ASLI */\n\
+.text-center.text-xs.text-gray-500 {\n\
+  font-size: 0 !important;\n\
+}\n\
+\n\
+/* GANTI TULISAN JADI RENSTR! */\n\
+.text-center.text-xs.text-gray-500::after {\n\
+  content: "'"$NEW_TEXT"'";\n\
+  font-size: 14px;\n\
+  color: #fff;\n\
 }\n\
 </style>\n' "$AUTH_LAYOUT"
 
-# ===== PERMISSION =====
+echo "✅ Login background updated"
+
+# ===== 2. FIX APP LAYOUT (DASHBOARD/BACKGROUND ASLI) =====
+sed -i '/<\/head>/i \
+<style>\n\
+/* ===== DASHBOARD BACKGROUND OVERRIDE ===== */\n\
+\n\
+/* BACKGROUND UTAMA DASHBOARD */\n\
+body,\n\
+.main-container,\n\
+.bg-gray-50 {\n\
+  background: url("'"$DASHBOARD_IMAGE_URL"'") no-repeat center center fixed !important;\n\
+  background-size: cover !important;\n\
+  background-color: transparent !important;\n\
+}\n\
+\n\
+/* PERBAIKI VISIBILITAS CARD */\n\
+.bg-gray-100,\n\
+.bg-white,\n\
+.bg-gray-800 {\n\
+  background: rgba(15, 23, 42, 0.85) !important;\n\
+  backdrop-filter: blur(8px) !important;\n\
+  border: 1px solid rgba(255,255,255,0.1) !important;\n\
+}\n\
+\n\
+/* PERBAIKI TEXT COLOR */\n\
+.text-gray-600,\n\
+.text-gray-700,\n\
+.text-gray-900,\n\
+.text-black {\n\
+  color: #f1f5f9 !important;\n\
+}\n\
+\n\
+/* HEADER TRANSPARAN */\n\
+.bg-gray-800 {\n\
+  background: rgba(15, 23, 42, 0.9) !important;\n\
+}\n\
+</style>\n' "$APP_LAYOUT"
+
+echo "✅ Dashboard background updated"
+
+# ===== 3. PERMISSION =====
 chown -R www-data:www-data "$PANEL_PATH"
 
-# ===== CLEAR CACHE =====
+# ===== 4. CLEAR CACHE =====
 cd "$PANEL_PATH" || exit
 php artisan view:clear
 php artisan cache:clear
 
-echo "✅ SELESAI!"
-echo "🖼️ Background: Custom Foto"
-echo "✏️ Text: RENSTR!"
+echo "========================================="
+echo "🎉 FIX SELESAI — SEMUA BACKGROUND DIGANTI!"
+echo "• Login background: $LOGIN_IMAGE_URL"
+echo "• Dashboard background: $DASHBOARD_IMAGE_URL"
+echo "• Text copyright: $NEW_TEXT"
+echo "========================================="
