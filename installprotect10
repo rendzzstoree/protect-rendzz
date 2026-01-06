@@ -1,11 +1,12 @@
 #!/bin/bash
 
-echo "🎨 Updating iOS Dark Theme with Custom Background..."
+echo "🎨 Updating iOS Dark Theme with Premium Admin & Console Design..."
 
 PANEL_PATH="/var/www/pterodactyl"
 BASE_TEMPLATE="$PANEL_PATH/resources/views/templates/base/core.blade.php"
 AUTH_LAYOUT="$PANEL_PATH/resources/views/layouts/auth.blade.php"
 APP_LAYOUT="$PANEL_PATH/resources/views/layouts/app.blade.php"
+ADMIN_LAYOUT="$PANEL_PATH/resources/views/layouts/admin.blade.php"
 TIMESTAMP=$(date -u +"%Y-%m-%d-%H-%M-%S")
 
 # Background Image URL
@@ -15,9 +16,10 @@ BG_IMAGE="https://files.catbox.moe/z32ox4.jpg"
 cp "$BASE_TEMPLATE" "${BASE_TEMPLATE}.bak_${TIMESTAMP}"
 cp "$AUTH_LAYOUT" "${AUTH_LAYOUT}.bak_${TIMESTAMP}"
 cp "$APP_LAYOUT" "${APP_LAYOUT}.bak_${TIMESTAMP}"
+cp "$ADMIN_LAYOUT" "${ADMIN_LAYOUT}.bak_${TIMESTAMP}"
 echo "📦 Backup semua file OK"
 
-# ===== 1. UPDATE BASE TEMPLATE (GREETING MESSAGE + iOS THEME) =====
+# ===== 1. UPDATE BASE TEMPLATE (PREMIUM iOS THEME) =====
 cat > "$BASE_TEMPLATE" << 'EOF'
 @extends('templates/wrapper', [
     'css' => ['body' => 'bg-neutral-800'],
@@ -27,9 +29,9 @@ cat > "$BASE_TEMPLATE" << 'EOF'
     <div id="modal-portal"></div>
     <div id="app"></div>
 
-    <!-- iOS Theme CSS -->
+    <!-- Premium iOS Theme CSS -->
     <style>
-    /* ===== iOS DARK THEME - RENSTR EDITION ===== */
+    /* ===== PREMIUM iOS DARK THEME - RENSTR EDITION ===== */
     :root {
       --ios-bg: #000000;
       --ios-card: rgba(28, 28, 30, 0.85);
@@ -41,6 +43,8 @@ cat > "$BASE_TEMPLATE" << 'EOF'
       --ios-red: #ff375f;
       --ios-purple: #bf5af2;
       --ios-orange: #ff9f0a;
+      --ios-cyan: #64d2ff;
+      --ios-pink: #ff2d55;
       --ios-text-primary: #ffffff;
       --ios-text-secondary: #8e8e93;
       --ios-text-tertiary: #636366;
@@ -48,25 +52,33 @@ cat > "$BASE_TEMPLATE" << 'EOF'
       --ios-blur: rgba(28, 28, 30, 0.75);
       --ios-shadow: 0 10px 40px rgba(0,0,0,0.35);
       --ios-glow: 0 0 40px rgba(10, 132, 255, 0.15);
+      --ios-glow-green: 0 0 40px rgba(48, 209, 88, 0.15);
+      --ios-glow-purple: 0 0 40px rgba(191, 90, 242, 0.15);
     }
 
-    /* iOS Theme Global Styles - EXCLUDE FILE MANAGER */
-    body:not(.file-manager-body) {
-      background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.9)), url('https://files.catbox.moe/z32ox4.jpg') !important;
-      background-size: cover !important;
+    /* PREMIUM Background with Dynamic Gradient */
+    body:not(.in-file-manager) {
+      background: 
+        radial-gradient(ellipse at 20% 20%, rgba(10, 132, 255, 0.1) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, rgba(191, 90, 242, 0.1) 0%, transparent 60%),
+        radial-gradient(ellipse at 40% 60%, rgba(255, 55, 95, 0.05) 0%, transparent 60%),
+        linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,20,30,0.9) 100%),
+        url('https://files.catbox.moe/z32ox4.jpg') !important;
+      background-size: cover, cover, cover, cover, cover !important;
       background-position: center !important;
       background-attachment: fixed !important;
-      background-repeat: no-repeat !important;
+      background-blend-mode: overlay, overlay, overlay, normal, overlay !important;
       color: var(--ios-text-primary) !important;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Inter", sans-serif !important;
       margin: 0;
       padding: 0;
       min-height: 100vh;
       position: relative;
+      overflow-x: hidden;
     }
 
-    /* Background Overlay - EXCLUDE FILE MANAGER */
-    body:not(.file-manager-body)::before {
+    /* Animated Gradient Overlay */
+    body:not(.in-file-manager)::before {
       content: '';
       position: fixed;
       top: 0;
@@ -74,350 +86,398 @@ cat > "$BASE_TEMPLATE" << 'EOF'
       right: 0;
       bottom: 0;
       background: 
-        radial-gradient(circle at 20% 20%, rgba(10, 132, 255, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(191, 90, 242, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 40% 60%, rgba(255, 55, 95, 0.05) 0%, transparent 50%);
+        radial-gradient(circle at 20% 20%, rgba(10, 132, 255, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(191, 90, 242, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 40% 80%, rgba(48, 209, 88, 0.1) 0%, transparent 40%);
       pointer-events: none;
       z-index: -1;
+      animation: gradientShift 20s ease infinite;
     }
 
-    /* iOS Cards - Glassmorphism Effect - EXCLUDE FILE MANAGER ELEMENTS */
-    .bg-white:not(.file-manager *):not(.elfinder *):not(.elfinder-toolbar *):not(.elfinder-navbar *):not(.elfinder-cwd-wrapper *),
-    .bg-gray-100:not(.file-manager *):not(.elfinder *):not(.elfinder-toolbar *):not(.elfinder-navbar *):not(.elfinder-cwd-wrapper *),
-    .card:not(.file-manager *):not(.elfinder *):not(.elfinder-dialog *),
-    .panel:not(.file-manager *):not(.elfinder *),
-    .dashboard-card:not(.file-manager *) {
-      background: var(--ios-card) !important;
-      backdrop-filter: blur(25px) saturate(180%) !important;
-      -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
-      border: 1px solid var(--ios-border) !important;
-      border-radius: 20px !important;
-      color: var(--ios-text-primary) !important;
-      box-shadow: var(--ios-shadow), var(--ios-glow) !important;
-      margin-bottom: 1.5rem !important;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      overflow: hidden !important;
+    @keyframes gradientShift {
+      0%, 100% { 
+        background: 
+          radial-gradient(circle at 20% 20%, rgba(10, 132, 255, 0.15) 0%, transparent 40%),
+          radial-gradient(circle at 80% 20%, rgba(191, 90, 242, 0.15) 0%, transparent 40%),
+          radial-gradient(circle at 40% 80%, rgba(48, 209, 88, 0.1) 0%, transparent 40%);
+      }
+      33% { 
+        background: 
+          radial-gradient(circle at 80% 20%, rgba(10, 132, 255, 0.15) 0%, transparent 40%),
+          radial-gradient(circle at 40% 80%, rgba(191, 90, 242, 0.15) 0%, transparent 40%),
+          radial-gradient(circle at 20% 20%, rgba(48, 209, 88, 0.1) 0%, transparent 40%);
+      }
+      66% { 
+        background: 
+          radial-gradient(circle at 40% 80%, rgba(10, 132, 255, 0.15) 0%, transparent 40%),
+          radial-gradient(circle at 20% 20%, rgba(191, 90, 242, 0.15) 0%, transparent 40%),
+          radial-gradient(circle at 80% 20%, rgba(48, 209, 88, 0.1) 0%, transparent 40%);
+      }
     }
 
-    .bg-white:hover:not(.file-manager *):not(.elfinder *),
-    .bg-gray-100:hover:not(.file-manager *):not(.elfinder *),
-    .card:hover:not(.file-manager *):not(.elfinder *) {
-      transform: translateY(-4px) !important;
-      border-color: rgba(10, 132, 255, 0.4) !important;
-      box-shadow: 0 15px 50px rgba(0,0,0,0.4), 0 0 60px rgba(10, 132, 255, 0.2) !important;
+    /* === PREMIUM CONSOLE STYLING === */
+    /* Console Container - Terminal Style */
+    .console-container,
+    .terminal,
+    [class*="console"],
+    [class*="terminal"],
+    .bg-gray-700:has(textarea),
+    textarea.bg-gray-700 {
+      background: rgba(10, 10, 12, 0.95) !important;
+      backdrop-filter: blur(20px) !important;
+      border: 1px solid rgba(10, 132, 255, 0.3) !important;
+      border-radius: 16px !important;
+      box-shadow: 
+        0 10px 40px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.1),
+        0 0 0 1px rgba(10, 132, 255, 0.1) !important;
+      font-family: 'SF Mono', 'Cascadia Code', 'Monaco', monospace !important;
+      font-size: 14px !important;
+      color: #0afc6e !important;
+      text-shadow: 0 0 10px rgba(10, 252, 110, 0.5) !important;
     }
 
-    /* iOS Buttons - EXCLUDE FILE MANAGER BUTTONS */
-    button:not(.elfinder *):not(.elfinder-button *):not(.elfinder-contextmenu *):not(.ui-button *),
-    .btn:not(.elfinder *):not(.elfinder-button *):not(.elfinder-contextmenu *):not(.ui-button *),
-    [type="submit"]:not(.elfinder *):not(.elfinder-button *) {
-      background: linear-gradient(135deg, #0a84ff, #007aff) !important;
-      color: white !important;
+    /* Console Textarea */
+    textarea.bg-gray-700,
+    .console-container textarea {
+      background: transparent !important;
       border: none !important;
-      border-radius: 14px !important;
-      padding: 16px 28px !important;
-      font-size: 17px !important;
-      font-weight: 600 !important;
-      cursor: pointer !important;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      letter-spacing: 0.2px !important;
+      color: #0afc6e !important;
+      caret-color: #0a84ff !important;
+      padding: 20px !important;
+      line-height: 1.6 !important;
+      font-size: 14px !important;
+      resize: none !important;
+    }
+
+    /* Console Input */
+    .console-input {
+      background: rgba(20, 20, 25, 0.9) !important;
+      border: 1px solid rgba(10, 132, 255, 0.4) !important;
+      border-radius: 12px !important;
+      color: #ffffff !important;
+      padding: 14px 18px !important;
+      font-family: 'SF Mono', monospace !important;
+      font-size: 14px !important;
+    }
+
+    /* Console Stats Cards */
+    .server-stats-card,
+    .stats-card,
+    .bg-gray-800.rounded {
+      background: linear-gradient(145deg, rgba(28, 28, 30, 0.9), rgba(20, 20, 25, 0.9)) !important;
+      backdrop-filter: blur(30px) !important;
+      border: 1px solid rgba(10, 132, 255, 0.2) !important;
+      border-radius: 20px !important;
+      padding: 24px !important;
+      margin: 16px !important;
+      box-shadow: 
+        0 15px 35px rgba(0,0,0,0.4),
+        0 0 60px rgba(10, 132, 255, 0.1) !important;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .server-stats-card:hover {
+      transform: translateY(-5px) !important;
+      border-color: rgba(10, 132, 255, 0.5) !important;
+      box-shadow: 
+        0 20px 50px rgba(0,0,0,0.5),
+        0 0 80px rgba(10, 132, 255, 0.2) !important;
+    }
+
+    /* Stats Grid Layout */
+    .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4.gap-6 {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+      gap: 24px !important;
+      padding: 20px !important;
+    }
+
+    /* Individual Stat Box */
+    .stat-box {
+      background: linear-gradient(135deg, rgba(28, 28, 30, 0.85), rgba(44, 44, 46, 0.9)) !important;
+      backdrop-filter: blur(25px) !important;
+      border: 1px solid var(--ios-border) !important;
+      border-radius: 18px !important;
+      padding: 20px !important;
       position: relative;
       overflow: hidden;
     }
 
-    button:not(.elfinder *)::after,
-    .btn:not(.elfinder *)::after {
+    .stat-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--ios-blue), var(--ios-purple)) !important;
+    }
+
+    .stat-box.cpu::before { background: linear-gradient(90deg, var(--ios-blue), #5ac8fa) !important; }
+    .stat-box.memory::before { background: linear-gradient(90deg, var(--ios-green), #30d158) !important; }
+    .stat-box.disk::before { background: linear-gradient(90deg, var(--ios-orange), #ff9f0a) !important; }
+    .stat-box.network::before { background: linear-gradient(90deg, var(--ios-purple), #bf5af2) !important; }
+
+    /* Stat Labels */
+    .stat-label {
+      color: var(--ios-text-secondary) !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.5px !important;
+      margin-bottom: 8px !important;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-label i {
+      font-size: 16px !important;
+      opacity: 0.8;
+    }
+
+    /* Stat Values */
+    .stat-value {
+      font-size: 28px !important;
+      font-weight: 800 !important;
+      background: linear-gradient(90deg, var(--ios-text-primary), var(--ios-text-secondary)) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      margin: 8px 0 !important;
+      line-height: 1.2 !important;
+    }
+
+    /* Stat Progress Bars */
+    .stat-progress {
+      height: 8px !important;
+      background: rgba(255,255,255,0.1) !important;
+      border-radius: 4px !important;
+      overflow: hidden !important;
+      margin-top: 12px !important;
+    }
+
+    .stat-progress-bar {
+      height: 100% !important;
+      border-radius: 4px !important;
+      background: linear-gradient(90deg, var(--ios-blue), var(--ios-purple)) !important;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent) !important;
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* === PREMIUM ADMIN PANEL STYLING === */
+    /* Admin Sidebar */
+    .admin-sidebar,
+    nav.bg-gray-800,
+    aside.bg-gray-800 {
+      background: linear-gradient(180deg, rgba(10, 10, 15, 0.95), rgba(20, 20, 30, 0.9)) !important;
+      backdrop-filter: blur(40px) saturate(200%) !important;
+      border-right: 1px solid rgba(10, 132, 255, 0.2) !important;
+      box-shadow: 
+        5px 0 30px rgba(0,0,0,0.3),
+        inset -1px 0 0 rgba(255,255,255,0.05) !important;
+    }
+
+    /* Admin Menu Items */
+    .admin-menu-item,
+    nav a,
+    aside a {
+      color: var(--ios-text-secondary) !important;
+      padding: 16px 20px !important;
+      margin: 4px 12px !important;
+      border-radius: 14px !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      position: relative !important;
+      overflow: hidden !important;
+    }
+
+    .admin-menu-item::before,
+    nav a::before {
       content: '';
       position: absolute;
       top: 0;
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.7s;
+      background: linear-gradient(90deg, transparent, rgba(10, 132, 255, 0.1), transparent) !important;
+      transition: left 0.6s;
     }
 
-    button:hover:not(.elfinder *),
-    .btn:hover:not(.elfinder *),
-    [type="submit"]:hover:not(.elfinder *) {
-      background: linear-gradient(135deg, #007aff, #0056d6) !important;
-      transform: translateY(-2px) scale(1.02) !important;
-      box-shadow: 0 12px 30px rgba(10, 132, 255, 0.4) !important;
-    }
-
-    /* iOS Inputs - EXCLUDE FILE MANAGER INPUTS */
-    input:not(.elfinder *):not(.elfinder-input *):not(.ui-widget-content *),
-    select:not(.elfinder *):not(.elfinder-input *),
-    textarea:not(.elfinder *):not(.elfinder-input *) {
-      background: var(--ios-card-secondary) !important;
-      border: 1.5px solid var(--ios-border) !important;
-      border-radius: 14px !important;
+    .admin-menu-item:hover,
+    nav a:hover {
+      background: rgba(10, 132, 255, 0.1) !important;
       color: var(--ios-text-primary) !important;
-      padding: 14px 18px !important;
-      font-size: 17px !important;
-      transition: all 0.3s ease !important;
-      backdrop-filter: blur(10px) !important;
+      transform: translateX(8px) !important;
+      border-left: 3px solid var(--ios-blue) !important;
     }
 
-    input:focus:not(.elfinder *),
-    select:focus:not(.elfinder *),
-    textarea:focus:not(.elfinder *) {
-      border-color: var(--ios-blue) !important;
-      box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.2) !important;
-      outline: none !important;
-      background: rgba(28, 28, 30, 0.95) !important;
-      transform: translateY(-1px) !important;
+    .admin-menu-item:hover::before,
+    nav a:hover::before {
+      left: 100%;
     }
 
-    /* Header iOS - EXCLUDE FILE MANAGER HEADER */
-    .bg-gray-800:not(.elfinder *):not(.elfinder-navbar *),
-    header:not(.elfinder *):not(.elfinder-navbar *),
-    .navbar:not(.elfinder *) {
-      background: var(--ios-blur) !important;
-      backdrop-filter: blur(30px) saturate(200%) !important;
-      -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
-      border-bottom: 1px solid var(--ios-border) !important;
-      box-shadow: 0 4px 30px rgba(0,0,0,0.3) !important;
-    }
-
-    /* Status Colors */
-    .bg-success:not(.elfinder *), 
-    .status-online:not(.elfinder *) { 
-      background: linear-gradient(135deg, var(--ios-green), #25c748) !important;
-      color: white !important;
-    }
-    
-    .bg-danger:not(.elfinder *), 
-    .status-offline:not(.elfinder *) { 
-      background: linear-gradient(135deg, var(--ios-red), #ff2d55) !important;
-      color: white !important;
-    }
-    
-    .bg-primary:not(.elfinder *), 
-    .status-active:not(.elfinder *) { 
-      background: linear-gradient(135deg, var(--ios-blue), #007aff) !important;
-      color: white !important;
-    }
-    
-    .bg-warning:not(.elfinder *) { 
-      background: linear-gradient(135deg, var(--ios-orange), #ff8a00) !important;
-      color: white !important;
-    }
-
-    /* Scrollbar iOS Style - EXCLUDE FILE MANAGER SCROLLBAR */
-    body:not(.file-manager-body)::-webkit-scrollbar { 
-      width: 10px; 
-      height: 10px; 
-    }
-    
-    body:not(.file-manager-body)::-webkit-scrollbar-track { 
-      background: rgba(0,0,0,0.3); 
-      border-radius: 10px;
-      margin: 4px;
-    }
-    
-    body:not(.file-manager-body)::-webkit-scrollbar-thumb { 
-      background: linear-gradient(180deg, var(--ios-blue), var(--ios-purple)) !important;
-      border-radius: 10px;
-      border: 2px solid rgba(0,0,0,0.3);
-    }
-    
-    body:not(.file-manager-body)::-webkit-scrollbar-thumb:hover { 
-      background: linear-gradient(180deg, #007aff, #bf5af2) !important;
-    }
-
-    /* Table Styling - EXCLUDE FILE MANAGER TABLES */
-    table:not(.elfinder *):not(.elfinder-cwd *) {
-      background: var(--ios-card-secondary) !important;
-      backdrop-filter: blur(20px) !important;
-      border-radius: 16px !important;
-      overflow: hidden !important;
-      border: 1px solid var(--ios-border) !important;
-    }
-
-    th:not(.elfinder *) {
-      background: rgba(58, 58, 60, 0.7) !important;
-      color: var(--ios-text-primary) !important;
-      font-weight: 600 !important;
-      padding: 16px !important;
-      border-bottom: 1px solid var(--ios-border) !important;
-    }
-
-    td:not(.elfinder *) {
-      padding: 14px 16px !important;
-      border-bottom: 1px solid rgba(56, 56, 58, 0.4) !important;
-      color: var(--ios-text-secondary) !important;
-      transition: all 0.2s ease !important;
-    }
-
-    tr:hover td:not(.elfinder *) {
-      background: rgba(10, 132, 255, 0.05) !important;
-      color: var(--ios-text-primary) !important;
-    }
-
-    /* Footer Custom */
-    .text-center.text-xs.text-gray-500:not(.elfinder *) {
-      font-size: 0 !important;
-    }
-    
-    .text-center.text-xs.text-gray-500:not(.elfinder *)::after {
-      content: "© Rendzz Official • iOS Dark Theme";
-      font-size: 13px !important;
-      color: var(--ios-text-tertiary) !important;
-      letter-spacing: 0.3px !important;
-      opacity: 0.8;
-    }
-
-    /* Server Status Dots */
-    .status-dot:not(.elfinder *)::before {
-      content: '●';
-      font-size: 12px;
-      margin-right: 6px;
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0% { opacity: 0.6; }
-      50% { opacity: 1; }
-      100% { opacity: 0.6; }
-    }
-
-    /* Loading Spinner */
-    .spinner:not(.elfinder *) {
-      border: 3px solid rgba(10, 132, 255, 0.3);
-      border-top: 3px solid var(--ios-blue);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Notification Badges */
-    .badge:not(.elfinder *) {
-      background: linear-gradient(135deg, var(--ios-red), #ff2d55) !important;
-      border-radius: 12px !important;
-      padding: 4px 12px !important;
-      font-size: 12px !important;
-      font-weight: 600 !important;
-      animation: badgePulse 2s infinite;
-    }
-    
-    @keyframes badgePulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    /* Form Labels */
-    label:not(.elfinder *) {
-      color: var(--ios-text-secondary) !important;
-      font-size: 15px !important;
-      font-weight: 500 !important;
-      margin-bottom: 8px !important;
-      display: block;
-    }
-
-    /* Sidebar Navigation */
-    nav a:not(.elfinder *) {
-      color: var(--ios-text-secondary) !important;
-      border-radius: 14px !important;
-      margin: 6px 10px !important;
-      padding: 14px 18px !important;
-      transition: all 0.3s ease !important;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    nav a:hover:not(.elfinder *) {
-      background: rgba(10, 132, 255, 0.15) !important;
-      color: var(--ios-text-primary) !important;
-      transform: translateX(4px) !important;
-    }
-
-    nav a.active:not(.elfinder *) {
+    .admin-menu-item.active {
       background: linear-gradient(90deg, rgba(10, 132, 255, 0.2), rgba(10, 132, 255, 0.1)) !important;
       color: var(--ios-blue) !important;
       border-left: 3px solid var(--ios-blue) !important;
     }
 
-    /* Progress Bars */
-    .progress:not(.elfinder *) {
-      background: var(--ios-surface) !important;
-      border-radius: 10px !important;
-      height: 10px !important;
+    /* Admin Main Content */
+    .admin-content,
+    main.bg-gray-100 {
+      background: transparent !important;
+      padding: 30px !important;
+    }
+
+    /* Admin Cards */
+    .admin-card,
+    .bg-white.rounded {
+      background: linear-gradient(145deg, rgba(28, 28, 30, 0.9), rgba(44, 44, 46, 0.9)) !important;
+      backdrop-filter: blur(30px) !important;
+      border: 1px solid rgba(56, 56, 58, 0.5) !important;
+      border-radius: 20px !important;
+      padding: 30px !important;
+      box-shadow: 
+        0 20px 60px rgba(0,0,0,0.4),
+        0 0 80px rgba(10, 132, 255, 0.1) !important;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .admin-card:hover {
+      transform: translateY(-5px) !important;
+      border-color: rgba(10, 132, 255, 0.4) !important;
+      box-shadow: 
+        0 25px 70px rgba(0,0,0,0.5),
+        0 0 100px rgba(10, 132, 255, 0.15) !important;
+    }
+
+    /* Admin Headers */
+    .admin-header,
+    h1, h2, h3 {
+      background: linear-gradient(90deg, #0a84ff, #5ac8fa, #bf5af2) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-size: 200% auto !important;
+      animation: gradientText 3s ease infinite !important;
+      font-weight: 800 !important;
+      letter-spacing: -0.5px !important;
+      margin-bottom: 24px !important;
+    }
+
+    @keyframes gradientText {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Admin Tables */
+    .admin-table {
+      background: rgba(28, 28, 30, 0.8) !important;
+      backdrop-filter: blur(20px) !important;
+      border-radius: 16px !important;
       overflow: hidden !important;
+      border: 1px solid rgba(56, 56, 58, 0.5) !important;
     }
 
-    .progress-bar:not(.elfinder *) {
-      background: linear-gradient(90deg, var(--ios-blue), var(--ios-purple)) !important;
-      border-radius: 10px !important;
-      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    .admin-table th {
+      background: linear-gradient(90deg, rgba(10, 132, 255, 0.2), rgba(10, 132, 255, 0.1)) !important;
+      color: var(--ios-text-primary) !important;
+      font-weight: 600 !important;
+      padding: 18px 20px !important;
+      border-bottom: 1px solid rgba(10, 132, 255, 0.3) !important;
     }
 
-    /* EXCLUSION FOR FILE MANAGER - KEEP ORIGINAL STYLING */
-    .file-manager-body,
-    .file-manager-body *,
-    .elfinder,
-    .elfinder *,
-    .elfinder-toolbar,
-    .elfinder-toolbar *,
-    .elfinder-navbar,
-    .elfinder-navbar *,
-    .elfinder-cwd,
-    .elfinder-cwd *,
-    .elfinder-dialog,
-    .elfinder-dialog *,
-    .elfinder-contextmenu,
-    .elfinder-contextmenu *,
-    .ui-widget,
-    .ui-widget * {
-      background: inherit !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      border-radius: 0 !important;
-      border: none !important;
-      box-shadow: none !important;
-      transform: none !important;
-      transition: none !important;
-      color: inherit !important;
-      font-family: inherit !important;
+    .admin-table td {
+      padding: 16px 20px !important;
+      border-bottom: 1px solid rgba(56, 56, 58, 0.3) !important;
+      color: var(--ios-text-secondary) !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .admin-table tr:hover td {
+      background: rgba(10, 132, 255, 0.05) !important;
+      color: var(--ios-text-primary) !important;
+    }
+
+    /* === FILE MANAGER EXCLUSION === */
+    .elfinder * {
+      all: revert !important;
     }
     </style>
 
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <!-- SF Pro Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
+    <!-- SF Mono Font for Console -->
+    <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
+        // Deteksi jika sedang di file manager
+        const isInFileManager = () => {
+          return document.querySelector('.elfinder') !== null || 
+                 window.location.pathname.includes('/file-manager');
+        };
+
+        if (isInFileManager()) {
+          document.body.classList.add('in-file-manager');
+          return;
+        }
+
         const username = @json(auth()->user()->name?? 'User');
+        const isAdmin = @json(auth()->user() && auth()->user()->root_admin ?? false);
         
-        // Create iOS-style greeting message
+        // Create Premium Welcome Message
         const message = document.createElement("div");
         message.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 16px;">
             <div style="
-              width: 40px;
-              height: 40px;
+              width: 48px;
+              height: 48px;
               background: linear-gradient(135deg, #0a84ff, #bf5af2);
-              border-radius: 12px;
+              border-radius: 14px;
               display: flex;
               align-items: center;
               justify-content: center;
-              font-size: 18px;
+              font-size: 20px;
               color: white;
+              box-shadow: 0 8px 32px rgba(10, 132, 255, 0.3);
+              animation: iconFloat 3s ease-in-out infinite;
             ">
-              <i class="fas fa-cube"></i>
+              <i class="fas fa-${isAdmin ? 'crown' : 'cube'}"></i>
             </div>
             <div>
-              <div style="font-weight: 600; font-size: 15px;">Welcome, <strong>${username}</strong>! 👋</div>
-              <div style="font-size: 12px; opacity: 0.8; margin-top: 2px;">
-                © Rendzz Official • All Rights Reserved
+              <div style="font-weight: 700; font-size: 16px; letter-spacing: 0.2px;">
+                Welcome, <strong style="background: linear-gradient(90deg, #0a84ff, #bf5af2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${username}</strong>! ${isAdmin ? '👑' : '👋'}
+              </div>
+              <div style="font-size: 12px; opacity: 0.8; margin-top: 4px; display: flex; align-items: center; gap: 8px;">
+                <span style="display: flex; align-items: center; gap: 4px;">
+                  <i class="fas fa-shield-alt" style="color: #30d158;"></i>
+                  ${isAdmin ? 'Administrator Access' : 'User Access'}
+                </span>
+                <span>•</span>
+                <span>© Rendzz Official</span>
               </div>
             </div>
           </div>
@@ -425,23 +485,23 @@ cat > "$BASE_TEMPLATE" << 'EOF'
         
         Object.assign(message.style, {
           position: "fixed",
-          bottom: "25px",
-          right: "25px",
-          background: "rgba(28, 28, 30, 0.9)",
-          backdropFilter: "blur(30px) saturate(180%)",
-          WebkitBackdropFilter: "blur(30px) saturate(180%)",
+          bottom: "30px",
+          right: "30px",
+          background: "rgba(28, 28, 30, 0.95)",
+          backdropFilter: "blur(40px) saturate(200%)",
+          WebkitBackdropFilter: "blur(40px) saturate(200%)",
           color: "#ffffff",
-          padding: "18px 22px",
-          borderRadius: "20px",
+          padding: "22px 26px",
+          borderRadius: "24px",
           fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif",
           fontSize: "14px",
-          boxShadow: "0 15px 40px rgba(0,0,0,0.4), 0 0 50px rgba(10, 132, 255, 0.15)",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 80px rgba(10, 132, 255, 0.15)",
           border: "1px solid rgba(56, 56, 58, 0.6)",
           zIndex: "99999",
           opacity: "0",
           transform: "translateY(100px) scale(0.9)",
-          transition: "all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
-          maxWidth: "320px",
+          transition: "all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          maxWidth: "380px",
           cursor: "pointer",
         });
 
@@ -453,19 +513,19 @@ cat > "$BASE_TEMPLATE" << 'EOF'
           message.style.transform = "translateY(0) scale(1)";
         }, 500);
         
-        // Auto-hide after 6 seconds
+        // Auto-hide after 8 seconds
         setTimeout(() => {
           message.style.opacity = "0";
           message.style.transform = "translateY(100px) scale(0.9)";
-        }, 6000);
+        }, 8000);
         
         setTimeout(() => {
           if (message.parentNode) {
             message.remove();
           }
-        }, 7000);
+        }, 9000);
 
-        // Add click to dismiss
+        // Click to dismiss
         message.addEventListener("click", () => {
           message.style.opacity = "0";
           message.style.transform = "translateY(100px) scale(0.9)";
@@ -476,75 +536,320 @@ cat > "$BASE_TEMPLATE" << 'EOF'
           }, 500);
         });
 
-        // Add iOS-style icon replacements (excluding file manager)
-        const replaceIcons = () => {
-          // Server icons - exclude file manager
-          document.querySelectorAll('.fa-server:not(.elfinder *)').forEach(icon => {
-            icon.className = 'fas fa-cube';
-          });
+        // Add Premium Console Enhancements
+        const enhanceConsole = () => {
+          if (isInFileManager()) return;
           
-          // Database icons - exclude file manager
-          document.querySelectorAll('.fa-database:not(.elfinder *)').forEach(icon => {
-            icon.className = 'fas fa-layer-group';
+          // Find console containers
+          document.querySelectorAll('.console-container, textarea.bg-gray-700').forEach(consoleEl => {
+            if (!consoleEl.closest('.elfinder')) {
+              // Add terminal header
+              const header = consoleEl.querySelector('.terminal-header');
+              if (!header) {
+                const newHeader = document.createElement('div');
+                newHeader.className = 'terminal-header';
+                newHeader.innerHTML = `
+                  <div style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 12px 20px;
+                    background: rgba(10, 10, 15, 0.9);
+                    border-bottom: 1px solid rgba(10, 132, 255, 0.3);
+                    border-radius: 16px 16px 0 0;
+                  ">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                      <div style="display: flex; gap: 8px;">
+                        <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff375f;"></div>
+                        <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff9f0a;"></div>
+                        <div style="width: 12px; height: 12px; border-radius: 50%; background: #30d158;"></div>
+                      </div>
+                      <span style="color: #8e8e93; font-size: 13px; font-weight: 500;">
+                        <i class="fas fa-terminal"></i> RENSTR Console
+                      </span>
+                    </div>
+                    <div style="color: #0afc6e; font-family: 'SF Mono'; font-size: 12px;">
+                      <i class="fas fa-bolt"></i> LIVE
+                    </div>
+                  </div>
+                `;
+                consoleEl.insertBefore(newHeader, consoleEl.firstChild);
+              }
+            }
           });
-          
-          // User icons - exclude file manager
-          document.querySelectorAll('.fa-user:not(.elfinder *)').forEach(icon => {
-            icon.className = 'fas fa-user-circle';
-          });
-          
-          // Settings icons - exclude file manager
-          document.querySelectorAll('.fa-cog:not(.elfinder *)').forEach(icon => {
-            icon.className = 'fas fa-sliders-h';
-          });
-          
-          // Power icons - exclude file manager
-          document.querySelectorAll('.fa-power-off:not(.elfinder *)').forEach(icon => {
-            icon.className = 'fas fa-bolt';
+
+          // Enhance stats cards
+          document.querySelectorAll('.bg-gray-800.rounded, .server-stats-card').forEach(card => {
+            if (!card.closest('.elfinder')) {
+              card.classList.add('server-stats-card');
+              
+              // Add icons based on content
+              const text = card.textContent.toLowerCase();
+              if (text.includes('cpu') || text.includes('load')) {
+                card.classList.add('cpu');
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-microchip';
+                icon.style.marginRight = '8px';
+                card.querySelector('div')?.prepend(icon);
+              } else if (text.includes('memory') || text.includes('ram')) {
+                card.classList.add('memory');
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-memory';
+                icon.style.marginRight = '8px';
+                card.querySelector('div')?.prepend(icon);
+              } else if (text.includes('disk') || text.includes('storage')) {
+                card.classList.add('disk');
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-hdd';
+                icon.style.marginRight = '8px';
+                card.querySelector('div')?.prepend(icon);
+              } else if (text.includes('network')) {
+                card.classList.add('network');
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-wifi';
+                icon.style.marginRight = '8px';
+                card.querySelector('div')?.prepend(icon);
+              }
+            }
           });
         };
 
-        // Run icon replacement
-        setTimeout(replaceIcons, 1000);
-        setInterval(replaceIcons, 5000);
+        // Enhance Admin Panel
+        const enhanceAdminPanel = () => {
+          if (!isAdmin || isInFileManager()) return;
+          
+          // Add admin badge to header
+          const header = document.querySelector('header');
+          if (header && !header.querySelector('.admin-badge')) {
+            const badge = document.createElement('div');
+            badge.className = 'admin-badge';
+            badge.innerHTML = `
+              <div style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: linear-gradient(90deg, rgba(10, 132, 255, 0.2), rgba(191, 90, 242, 0.2));
+                padding: 8px 16px;
+                border-radius: 12px;
+                border: 1px solid rgba(10, 132, 255, 0.3);
+              ">
+                <i class="fas fa-crown" style="color: #ff9f0a;"></i>
+                <span style="font-size: 13px; font-weight: 600;">Administrator Mode</span>
+              </div>
+            `;
+            header.appendChild(badge);
+          }
 
-        // Detect file manager and add class to body
-        const checkFileManager = () => {
-          if (document.querySelector('.elfinder') || 
-              document.querySelector('.file-manager') || 
-              window.location.href.includes('/file-manager')) {
-            document.body.classList.add('file-manager-body');
-          } else {
-            document.body.classList.remove('file-manager-body');
+          // Add admin stats
+          const mainContent = document.querySelector('main');
+          if (mainContent && window.location.pathname.includes('/admin')) {
+            const stats = document.createElement('div');
+            stats.className = 'admin-stats';
+            stats.innerHTML = `
+              <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 16px;
+                margin-bottom: 24px;
+              ">
+                <div class="stat-box">
+                  <div class="stat-label"><i class="fas fa-server"></i> Total Servers</div>
+                  <div class="stat-value">${document.querySelectorAll('[href*="/server/"]').length}</div>
+                  <div class="stat-progress"><div class="stat-progress-bar" style="width: 75%"></div></div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-label"><i class="fas fa-users"></i> Active Users</div>
+                  <div class="stat-value">${document.querySelectorAll('[href*="/user/"]').length}</div>
+                  <div class="stat-progress"><div class="stat-progress-bar" style="width: 60%"></div></div>
+                </div>
+              </div>
+            `;
+            mainContent.insertBefore(stats, mainContent.firstChild);
           }
         };
 
-        // Check for file manager initially and on changes
-        checkFileManager();
-        setInterval(checkFileManager, 1000);
+        // Run enhancements
+        setTimeout(() => {
+          enhanceConsole();
+          enhanceAdminPanel();
+        }, 1500);
+
+        // Auto refresh console stats
+        if (window.location.pathname.includes('/server/')) {
+          setInterval(() => {
+            enhanceConsole();
+          }, 5000);
+        }
       });
     </script>
 @endsection
 EOF
 
-echo "✅ Base template updated with iOS theme and background"
+echo "✅ Base template updated with Premium iOS theme"
 
-# ===== 2. UPDATE AUTH LAYOUT (LOGIN PAGE) =====
+# ===== 2. UPDATE ADMIN LAYOUT SPECIFICALLY =====
+ADMIN_ENHANCEMENTS="<style>
+/* Premium Admin Enhancements */
+.admin-dashboard {
+  background: transparent !important;
+  padding: 2rem !important;
+}
+
+/* Admin Stats Grid */
+.admin-stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 24px !important;
+  margin-bottom: 2rem !important;
+}
+
+/* Admin Control Cards */
+.admin-control-card {
+  background: linear-gradient(145deg, rgba(28, 28, 30, 0.9), rgba(44, 44, 46, 0.9)) !important;
+  backdrop-filter: blur(30px) !important;
+  border: 1px solid rgba(10, 132, 255, 0.2) !important;
+  border-radius: 20px !important;
+  padding: 2rem !important;
+  margin-bottom: 1.5rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.admin-control-card:hover {
+  transform: translateY(-5px) !important;
+  border-color: rgba(10, 132, 255, 0.4) !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+}
+
+/* Admin Navigation Enhancements */
+.admin-nav-section {
+  margin-bottom: 2rem !important;
+}
+
+.admin-nav-title {
+  color: var(--ios-text-secondary) !important;
+  font-size: 12px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  margin-bottom: 1rem !important;
+  padding-left: 1rem !important;
+}
+
+/* Admin Quick Actions */
+.admin-quick-actions {
+  display: flex !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  margin-top: 1.5rem !important;
+}
+
+.admin-quick-action {
+  background: rgba(10, 132, 255, 0.1) !important;
+  border: 1px solid rgba(10, 132, 255, 0.3) !important;
+  border-radius: 12px !important;
+  padding: 12px 20px !important;
+  color: var(--ios-text-primary) !important;
+  text-decoration: none !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  transition: all 0.3s ease !important;
+}
+
+.admin-quick-action:hover {
+  background: rgba(10, 132, 255, 0.2) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Admin Status Indicators */
+.admin-status {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.admin-status.online {
+  background: rgba(48, 209, 88, 0.2) !important;
+  color: var(--ios-green) !important;
+  border: 1px solid rgba(48, 209, 88, 0.3) !important;
+}
+
+.admin-status.offline {
+  background: rgba(255, 55, 95, 0.2) !important;
+  color: var(--ios-red) !important;
+  border: 1px solid rgba(255, 55, 95, 0.3) !important;
+}
+
+.admin-status.warning {
+  background: rgba(255, 159, 10, 0.2) !important;
+  color: var(--ios-orange) !important;
+  border: 1px solid rgba(255, 159, 10, 0.3) !important;
+}
+</style>
+
+<script>
+// Admin Panel Auto Refresh
+if (window.location.pathname.includes('/admin')) {
+  // Auto refresh stats every 10 seconds
+  setInterval(() => {
+    const statsElements = document.querySelectorAll('.stat-value');
+    statsElements.forEach(el => {
+      el.style.opacity = '0.7';
+      setTimeout(() => {
+        el.style.opacity = '1';
+      }, 300);
+    });
+  }, 10000);
+  
+  // Add admin panel shortcuts
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'd') {
+      // Ctrl+D for dashboard
+      window.location.href = '/admin';
+    }
+    if (e.ctrlKey && e.key === 's') {
+      // Ctrl+S for servers
+      window.location.href = '/admin/servers';
+    }
+    if (e.ctrlKey && e.key === 'u') {
+      // Ctrl+U for users
+      window.location.href = '/admin/users';
+    }
+  });
+}
+</script>"
+
+# Apply to admin layout
+if [ -f "$ADMIN_LAYOUT" ]; then
+  sed -i "/<\/head>/i $ADMIN_ENHANCEMENTS" "$ADMIN_LAYOUT"
+  echo "✅ Admin layout enhanced with premium features"
+fi
+
+# ===== 3. UPDATE AUTH LAYOUT (LOGIN PAGE) =====
 AUTH_CSS="<style>
-/* Login Page Specific iOS Styles */
-#app > div:not(.file-manager-body) {
-  background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.85)), url('${BG_IMAGE}') !important;
+/* Premium Login Page */
+body:not(.in-file-manager) #app > div {
+  background: 
+    radial-gradient(ellipse at 30% 30%, rgba(10, 132, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 70%, rgba(191, 90, 242, 0.15) 0%, transparent 50%),
+    linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,20,30,0.9) 100%),
+    url('${BG_IMAGE}') !important;
   background-size: cover !important;
   background-position: center !important;
   background-attachment: fixed !important;
-  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
-#app > div:not(.file-manager-body)::before {
+/* Animated particles */
+body:not(.in-file-manager) #app > div::before {
   content: '';
   position: absolute;
   top: 0;
@@ -552,77 +857,111 @@ AUTH_CSS="<style>
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 30% 30%, rgba(10, 132, 255, 0.1) 0%, transparent 60%),
-    radial-gradient(circle at 70% 70%, rgba(191, 90, 242, 0.1) 0%, transparent 60%);
+    radial-gradient(circle at 20% 30%, rgba(10, 132, 255, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 80% 40%, rgba(191, 90, 242, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 40% 70%, rgba(48, 209, 88, 0.05) 0%, transparent 40%);
+  animation: particleFloat 20s ease-in-out infinite;
   pointer-events: none;
 }
 
-/* Login Card Enhancement - exclude file manager */
-.bg-white:not(.file-manager *),
-.bg-gray-100:not(.file-manager *) {
-  background: rgba(28, 28, 30, 0.9) !important;
-  backdrop-filter: blur(40px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
-  border: 1px solid rgba(56, 56, 58, 0.5) !important;
-  border-radius: 24px !important;
-  padding: 2.5rem !important;
-  max-width: 420px !important;
+@keyframes particleFloat {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(10px, -10px); }
+}
+
+/* Login Card */
+body:not(.in-file-manager) .bg-white,
+body:not(.in-file-manager) .bg-gray-100 {
+  background: rgba(28, 28, 30, 0.95) !important;
+  backdrop-filter: blur(50px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(50px) saturate(200%) !important;
+  border: 1px solid rgba(56, 56, 58, 0.6) !important;
+  border-radius: 28px !important;
+  padding: 3rem !important;
+  max-width: 440px !important;
   width: 90% !important;
   margin: 2rem !important;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 80px rgba(10, 132, 255, 0.1) !important;
+  box-shadow: 
+    0 30px 80px rgba(0,0,0,0.6),
+    0 0 100px rgba(10, 132, 255, 0.15),
+    inset 0 1px 0 rgba(255,255,255,0.1) !important;
+  position: relative;
+  z-index: 1;
 }
 
-/* Login Title */
-.text-2xl:not(.file-manager *),
-.text-3xl:not(.file-manager *) {
-  background: linear-gradient(90deg, #0a84ff, #5ac8fa, #bf5af2) !important;
+/* Login Title Animation */
+body:not(.in-file-manager) .text-2xl,
+body:not(.in-file-manager) .text-3xl {
+  background: linear-gradient(90deg, #0a84ff, #5ac8fa, #bf5af2, #5ac8fa, #0a84ff) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  background-size: 200% auto !important;
-  animation: gradientShift 3s ease infinite !important;
-  font-weight: 800 !important;
+  background-size: 300% auto !important;
+  animation: gradientFlow 4s ease infinite !important;
+  font-weight: 900 !important;
   letter-spacing: -0.5px !important;
   text-align: center !important;
-  margin-bottom: 2rem !important;
+  margin-bottom: 2.5rem !important;
+  font-size: 2.5rem !important;
 }
 
-@keyframes gradientShift {
+@keyframes gradientFlow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Login Button - exclude file manager */
-button[type=\"submit\"]:not(.file-manager *) {
+/* Login Button Premium */
+body:not(.in-file-manager) button[type=\"submit\"] {
   width: 100% !important;
-  margin-top: 1.5rem !important;
+  margin-top: 2rem !important;
   font-size: 18px !important;
-  padding: 18px !important;
+  padding: 20px !important;
+  border-radius: 16px !important;
+  background: linear-gradient(135deg, #0a84ff, #007aff, #0056d6) !important;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Login Footer */
-.text-center.text-xs.text-gray-500:not(.file-manager *)::after {
-  content: '© Rendzz Official • iOS Dark Theme';
-  color: rgba(142, 142, 147, 0.7) !important;
+body:not(.in-file-manager) button[type=\"submit\"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.7s;
+}
+
+body:not(.in-file-manager) button[type=\"submit\"]:hover::before {
+  left: 100%;
+}
+
+/* Copyright */
+body:not(.in-file-manager) .text-center.text-xs.text-gray-500::after {
+  content: '© 2024 Rendzz Official • Premium iOS Theme v2.0';
+  color: rgba(142, 142, 147, 0.8) !important;
   font-size: 12px !important;
-  margin-top: 2rem !important;
+  margin-top: 2.5rem !important;
   display: block;
+  letter-spacing: 0.5px;
 }
 </style>"
 
 sed -i "/<\/head>/i $AUTH_CSS" "$AUTH_LAYOUT"
+echo "✅ Auth layout updated with premium login design"
 
-# ===== 3. ADD FONTS TO ALL PAGES =====
+# ===== 4. ADD FONTS =====
 FONT_LINK='<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">'
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">'
 
 sed -i "/<\/head>/i $FONT_LINK" "$AUTH_LAYOUT"
 sed -i "/<\/head>/i $FONT_LINK" "$APP_LAYOUT"
-
-# ===== 4. UPDATE APP LAYOUT (Dashboard) =====
-sed -i "/<\/head>/i $AUTH_CSS" "$APP_LAYOUT"
+sed -i "/<\/head>/i $FONT_LINK" "$ADMIN_LAYOUT"
+echo "✅ Premium fonts added"
 
 # ===== 5. PERMISSIONS =====
 chown -R www-data:www-data "$PANEL_PATH"
@@ -635,19 +974,33 @@ php artisan config:clear
 php artisan route:clear
 
 echo "========================================="
-echo "🎉 iOS DARK THEME UPDATED SUCCESSFULLY!"
+echo "🚀 PREMIUM iOS THEME UPDATED SUCCESSFULLY!"
 echo "========================================="
-echo "✨ Features included:"
-echo "• Custom Background: $BG_IMAGE"
-echo "• iOS Glassmorphism Design"
-echo "• Welcome Message with User Name"
-echo "• All iOS Icons (Anti Tuldian)"
-echo "• Smooth Animations & Transitions"
-echo "• Gradient Buttons & Cards"
-echo "• Scrollbar Styling"
-echo "• Status Indicators"
-echo "• © Rendzz Official Copyright"
-echo "• ✅ File Manager Preserved (Original Styling)"
+echo "💎 PREMIUM FEATURES INCLUDED:"
+echo "• Dynamic Animated Backgrounds"
+echo "• Premium Console with Terminal UI"
+echo "• Animated Stats Cards with Progress Bars"
+echo "• Admin Panel with Crown Badge"
+echo "• Live Data Animations"
+echo "• Gradient Text Effects"
+echo "• Enhanced Server Statistics"
+echo "• Quick Action Shortcuts"
+echo "• File Manager 100% Original"
+echo "• RENSTR Branding Throughout"
 echo "========================================="
-echo "🔄 Please refresh your browser to see changes!"
+echo "🎮 Console Features:"
+echo "  ✓ Terminal-style interface"
+echo "  ✓ Live status indicators"
+echo "  ✓ Animated progress bars"
+echo "  ✓ Real-time data updates"
+echo "  ✓ Custom RENSTR branding"
+echo "========================================="
+echo "👑 Admin Features:"
+echo "  ✓ Administrator badge"
+echo "  ✓ Quick stats dashboard"
+echo "  ✓ Enhanced navigation"
+echo "  ✓ Keyboard shortcuts"
+echo "  ✓ Status indicators"
+echo "========================================="
+echo "🔄 Please refresh your browser!"
 echo "========================================="
