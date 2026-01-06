@@ -4,18 +4,18 @@ REMOTE_PATH="/var/www/pterodactyl/app/Http/Controllers/Admin/UserController.php"
 TIMESTAMP=$(date -u +"%Y-%m-%d-%H-%M-%S")
 BACKUP_PATH="${REMOTE_PATH}.bak_${TIMESTAMP}"
 
-echo "🚀 Memasang proteksi UserController.php anti hapus dan anti ubah data user..."
+echo "🔒 Memasang SUPER ADVANCED UserController Protection System..."
 
 # Backup file lama jika ada
 if [ -f "$REMOTE_PATH" ]; then
-  mv "$REMOTE_PATH" "$BACKUP_PATH"
-  echo "📦 Backup file lama dibuat di $BACKUP_PATH"
+    cp "$REMOTE_PATH" "$BACKUP_PATH"
+    echo "📦 Backup file lama dibuat di $BACKUP_PATH"
 fi
 
 mkdir -p "$(dirname "$REMOTE_PATH")"
 chmod 755 "$(dirname "$REMOTE_PATH")"
 
-cat > "$REMOTE_PATH" <<'EOF'
+cat > "$REMOTE_PATH" << 'EOF'
 <?php
 
 namespace Pterodactyl\Http\Controllers\Admin;
@@ -23,8 +23,8 @@ namespace Pterodactyl\Http\Controllers\Admin;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Pterodactyl\Models\User;
-use Pterodactyl\Models\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -39,6 +39,9 @@ use Pterodactyl\Services\Users\UserDeletionService;
 use Pterodactyl\Http\Requests\Admin\UserFormRequest;
 use Pterodactyl\Http\Requests\Admin\NewUserFormRequest;
 use Pterodactyl\Contracts\Repository\UserRepositoryInterface;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+
 class UserController extends Controller
 {
     use AvailableLanguages;
@@ -82,6 +85,12 @@ class UserController extends Controller
      */
     public function create(): View
     {
+        // 🔒 Cek permission untuk create user
+        $currentUser = Auth::user();
+        if (!$currentUser || $currentUser->id !== 1) {
+            throw new DisplayException("⛔ Anda tidak memiliki izin untuk membuat user baru. Hanya Admin ID 1 yang dapat melakukan ini.");
+        }
+
         return $this->view->make('admin.users.new', [
             'languages' => $this->getAvailableLanguages(true),
         ]);
@@ -92,6 +101,13 @@ class UserController extends Controller
      */
     public function view(User $user): View
     {
+        $currentUser = Auth::user();
+        
+        // 🔒 Jika bukan admin ID 1, hanya bisa lihat profile sendiri
+        if ($currentUser->id !== 1 && $currentUser->id !== $user->id) {
+            abort(403, '🚫 Akses ditolak! Anda hanya dapat melihat profile sendiri.');
+        }
+
         return $this->view->make('admin.users.view', [
             'user' => $user,
             'languages' => $this->getAvailableLanguages(true),
@@ -101,22 +117,61 @@ class UserController extends Controller
     /**
      * Delete a user from the system.
      *
-     * @throws Exception
-     * @throws PterodactylExceptionsDisplayException
+     * @throws \Exception
+     * @throws \Pterodactyl\Exceptions\DisplayException
      */
     public function delete(Request $request, User $user): RedirectResponse
     {
-        // === FITUR TAMBAHAN: Proteksi hapus user ===
-        if ($request->user()->id !== 1) {
-            throw new DisplayException("❌ 𝗚𝗔𝗧𝗔𝗨 𝗠𝗔𝗟𝗨 𝗣𝗥𝗢𝗧𝗘𝗖𝗧 𝗕𝗬 𝗥𝗘𝗡𝗗𝗭𝗭");
-        }
-        // ============================================
+        $currentUser = Auth::user();
+        
+        // 🔒 LOG DETAILED ACCESS ATTEMPT
+        Log::warning('DELETE USER ATTEMPT', [
+            'attacker_id' => $currentUser->id,
+            'attacker_email' => $currentUser->email,
+            'target_user_id' => $user->id,
+            'target_email' => $user->email,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'timestamp' => now()->toDateTimeString()
+        ]);
 
-        if ($request->user()->id === $user->id) {
+        // 🔒 STRICT PROTECTION: Hanya admin ID 1 yang bisa delete user
+        if ($currentUser->id !== 1) {
+            // 🚨 Enhanced error message with security logging
+            throw new DisplayException(
+                "🚨 **SECURITY BREACH DETECTED**\n\n" .
+                "⛔ **ACCESS DENIED - UNAUTHORIZED DELETE ATTEMPT**\n" .
+                "══════════════════════════════════════════════════════\n" .
+                "📋 **Incident Details:**\n" .
+                "   • Attacker: {$currentUser->email} (ID: {$currentUser->id})\n" .
+                "   • Target: {$user->email} (ID: {$user->id})\n" .
+                "   • IP Address: {$request->ip()}\n" .
+                "   • Time: " . now()->format('Y-m-d H:i:s') . "\n" .
+                "══════════════════════════════════════════════════════\n" .
+                "🔒 **Security System:** RENDZZ SUPER PROTECT v3.0\n" .
+                "📞 **Action Required:** This incident has been logged.\n" .
+                "⚠️  **Note:** Only ROOT ADMIN (ID: 1) can delete users.\n" .
+                "══════════════════════════════════════════════════════"
+            );
+        }
+
+        // 🔒 Prevent self-deletion
+        if ($currentUser->id === $user->id) {
             throw new DisplayException($this->translator->get('admin/user.exceptions.user_has_servers'));
         }
 
         $this->deletionService->handle($user);
+
+        // ✅ Log successful deletion by admin
+        Log::info('USER DELETED BY ADMIN', [
+            'admin_id' => $currentUser->id,
+            'admin_email' => $currentUser->email,
+            'deleted_user_id' => $user->id,
+            'deleted_email' => $user->email,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        $this->alert->success($this->translator->get('admin/user.notices.user_deleted'))->flash();
 
         return redirect()->route('admin.users');
     }
@@ -124,12 +179,33 @@ class UserController extends Controller
     /**
      * Create a user.
      *
-     * @throws Exception
-     * @throws Throwable
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function store(NewUserFormRequest $request): RedirectResponse
     {
+        $currentUser = Auth::user();
+        
+        // 🔒 Hanya admin ID 1 yang bisa create user
+        if ($currentUser->id !== 1) {
+            throw new DisplayException(
+                "⛔ **CREATE USER PERMISSION DENIED**\n\n" .
+                "Hanya Root Administrator (ID: 1) yang dapat membuat user baru.\n" .
+                "User yang mencoba: {$currentUser->email}\n" .
+                "Waktu: " . now()->format('Y-m-d H:i:s')
+            );
+        }
+
         $user = $this->creationService->handle($request->normalize());
+        
+        // Log creation
+        Log::info('USER CREATED BY ADMIN', [
+            'admin_id' => $currentUser->id,
+            'new_user_id' => $user->id,
+            'new_user_email' => $user->email,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
         $this->alert->success($this->translator->get('admin/user.notices.account_created'))->flash();
 
         return redirect()->route('admin.users.view', $user->id);
@@ -138,29 +214,116 @@ class UserController extends Controller
     /**
      * Update a user on the system.
      *
-     * @throws PterodactylExceptionsModelDataValidationException
-     * @throws PterodactylExceptionsRepositoryRecordNotFoundException
+     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
+     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
      */
     public function update(UserFormRequest $request, User $user): RedirectResponse
     {
-        // === FITUR TAMBAHAN: Proteksi ubah data penting ===
-        $restrictedFields = ['email', 'first_name', 'last_name', 'password'];
+        $currentUser = Auth::user();
+        $changes = [];
+        
+        // 🔒 DETECT CHANGES FOR LOGGING
+        $originalData = $user->toArray();
+        
+        // 🔒 SUPER STRICT PERMISSION CHECK
+        if ($currentUser->id !== 1) {
+            // Jika bukan admin ID 1, hanya boleh edit diri sendiri
+            if ($currentUser->id !== $user->id) {
+                // 🚨 Enhanced security logging
+                Log::critical('UNAUTHORIZED USER UPDATE ATTEMPT', [
+                    'attacker_id' => $currentUser->id,
+                    'attacker_email' => $currentUser->email,
+                    'target_user_id' => $user->id,
+                    'target_email' => $user->email,
+                    'request_data' => $request->except(['_token', 'password']),
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                    'timestamp' => now()->toDateTimeString()
+                ]);
 
-        foreach ($restrictedFields as $field) {
-            if ($request->filled($field) && $request->user()->id !== 1) {
-                throw new DisplayException("⚠️ Data hanya bisa diubah oleh admin ID 1. ©versi V1.3");
+                throw new DisplayException(
+                    "🚨 **SECURITY ALERT - UNAUTHORIZED MODIFICATION**\n\n" .
+                    "⛔ **ACCESS VIOLATION DETECTED**\n" .
+                    "══════════════════════════════════════════════════════\n" .
+                    "📋 **Security Incident Report:**\n" .
+                    "   • Attacker: {$currentUser->email}\n" .
+                    "   • Target User: {$user->email}\n" .
+                    "   • Attempted Action: Modify user data\n" .
+                    "   • IP Address: {$request->ip()}\n" .
+                    "   • Time: " . now()->format('Y-m-d H:i:s') . "\n" .
+                    "══════════════════════════════════════════════════════\n" .
+                    "🔒 **Security Policy:**\n" .
+                    "   • Users can only edit their OWN profile\n" .
+                    "   • Only ROOT ADMIN can edit other users\n" .
+                    "   • All violations are logged and monitored\n" .
+                    "══════════════════════════════════════════════════════\n" .
+                    "⚠️  **This incident has been recorded in security logs.**\n" .
+                    "📞 **Contact:** System Administrator if this was a mistake.\n" .
+                    "══════════════════════════════════════════════════════"
+                );
+            }
+            
+            // 🔒 Jika edit diri sendiri, cek field yang diubah
+            $restrictedFields = ['email', 'root_admin', 'role', 'permissions'];
+            foreach ($restrictedFields as $field) {
+                if ($request->has($field) && $originalData[$field] != $request->input($field)) {
+                    throw new DisplayException(
+                        "⛔ **FIELD RESTRICTION VIOLATION**\n\n" .
+                        "Field '{$field}' tidak dapat diubah oleh user biasa.\n" .
+                        "Hanya Administrator yang dapat mengubah field ini.\n" .
+                        "Silahkan kontak administrator sistem."
+                    );
+                }
             }
         }
 
-        // Cegah turunkan level admin ke user biasa
-        if ($user->root_admin && $request->user()->id !== 1) {
-            throw new DisplayException("🚫 Tidak dapat menurunkan hak admin pengguna ini. Hanya ID 1 yang memiliki izin. rendzz officiall");
+        // 🔒 SPECIAL PROTECTION FOR ADMIN DEMOTION
+        if ($user->root_admin && $currentUser->id !== 1) {
+            throw new DisplayException(
+                "🔐 **ADMIN PROTECTION ACTIVE**\n\n" .
+                "Tidak dapat menurunkan hak administrator user ini.\n" .
+                "Hanya ROOT ADMIN (ID: 1) yang memiliki izin untuk ini.\n" .
+                "Sistem keamanan: RENDZZ ADMIN PROTECT v2.0"
+            );
         }
-        // ====================================================
 
-        $this->updateService
+        // 🔒 PREVENT ROOT ADMIN (ID: 1) FROM BEING DEMOTED
+        if ($user->id === 1 && $request->has('root_admin') && !$request->input('root_admin')) {
+            throw new DisplayException(
+                "👑 **ROOT ADMIN PROTECTION**\n\n" .
+                "User ID 1 adalah ROOT ADMIN utama sistem.\n" .
+                "Status administrator tidak dapat dinonaktifkan.\n" .
+                "Ini adalah pengaturan keamanan sistem."
+            );
+        }
+
+        // 🔒 EXECUTE UPDATE
+        $updatedUser = $this->updateService
             ->setUserLevel(User::USER_LEVEL_ADMIN)
             ->handle($user, $request->normalize());
+
+        // 🔒 LOG THE UPDATE
+        $newData = $updatedUser->toArray();
+        foreach ($originalData as $key => $value) {
+            if (isset($newData[$key]) && $newData[$key] != $value) {
+                $changes[$key] = [
+                    'from' => $value,
+                    'to' => $newData[$key]
+                ];
+            }
+        }
+
+        if (!empty($changes)) {
+            Log::info('USER DATA UPDATED', [
+                'updater_id' => $currentUser->id,
+                'updater_email' => $currentUser->email,
+                'target_user_id' => $user->id,
+                'target_email' => $user->email,
+                'changes' => $changes,
+                'ip_address' => $request->ip(),
+                'timestamp' => now()->toDateTimeString()
+            ]);
+        }
 
         $this->alert->success(trans('admin/user.notices.account_updated'))->flash();
 
@@ -170,8 +333,20 @@ class UserController extends Controller
     /**
      * Get a JSON response of users on the system.
      */
-    public function json(Request $request): Model|Collection
+    public function json(Request $request): JsonResponse
     {
+        $currentUser = Auth::user();
+        
+        // 🔒 Hanya admin yang bisa akses JSON data users
+        if (!$currentUser->root_admin) {
+            return response()->json([
+                'error' => 'Unauthorized',
+                'message' => '⛔ Hanya administrator yang dapat mengakses data JSON users.',
+                'security_level' => 'high',
+                'system' => 'RENDZZ SECURITY v3.0'
+            ], 403);
+        }
+
         $users = QueryBuilder::for(User::query())->allowedFilters(['email'])->paginate(25);
 
         // Handle single user requests.
@@ -179,19 +354,40 @@ class UserController extends Controller
             $user = User::query()->findOrFail($request->input('user_id'));
             $user->md5 = md5(strtolower($user->email));
 
-            return $user;
+            return response()->json($user);
         }
 
-        return $users->map(function ($item) {
+        $users->transform(function ($item) {
             $item->md5 = md5(strtolower($item->email));
-
             return $item;
         });
+
+        return response()->json($users);
     }
 }
 EOF
 
+# Set permissions
 chmod 644 "$REMOTE_PATH"
-echo "✅ Proteksi UserController.php berhasil dipasang!"
-echo "📂 Lokasi file: $REMOTE_PATH"
-echo "🗂️ Backup file lama: $BACKUP_PATH"
+chown www-data:www-data "$REMOTE_PATH"
+
+# Clear Laravel cache
+cd /var/www/pterodactyl 2>/dev/null && php artisan view:clear > /dev/null 2>&1
+
+echo ""
+echo "✅ SUPER ADVANCED UserController Protection installed!"
+echo ""
+echo "🔒 FEATURES ENABLED:"
+echo "   1. Only Admin ID 1 can delete users"
+echo "   2. Users can only edit their OWN profile"
+echo "   3. Root Admin (ID 1) cannot be demoted"
+echo "   4. Detailed security logging for all actions"
+echo "   5. JSON API protection"
+echo "   6. Field-level permission controls"
+echo "   7. IP address tracking"
+echo "   8. User agent logging"
+echo ""
+echo "📁 Backup file: $BACKUP_PATH"
+echo "🎯 Security System: RENDZZ SUPER PROTECT v3.0"
+echo "⚠️  All unauthorized attempts will be logged!"
+echo ""
