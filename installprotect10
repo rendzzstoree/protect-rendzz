@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🎨 Installing Premium iOS Glass Theme..."
+echo "🎨 Updating iOS Dark Theme with Custom Background..."
 
 PANEL_PATH="/var/www/pterodactyl"
 BASE_TEMPLATE="$PANEL_PATH/resources/views/templates/base/core.blade.php"
@@ -8,9 +8,8 @@ AUTH_LAYOUT="$PANEL_PATH/resources/views/layouts/auth.blade.php"
 APP_LAYOUT="$PANEL_PATH/resources/views/layouts/app.blade.php"
 TIMESTAMP=$(date -u +"%Y-%m-%d-%H-%M-%S")
 
-# Background & Icon URLs
+# Background Image URL
 BG_IMAGE="https://files.catbox.moe/z32ox4.jpg"
-ICON_IMAGE="https://files.catbox.moe/s5j9uq.jpg"
 
 # ===== BACKUP =====
 cp "$BASE_TEMPLATE" "${BASE_TEMPLATE}.bak_${TIMESTAMP}"
@@ -18,53 +17,56 @@ cp "$AUTH_LAYOUT" "${AUTH_LAYOUT}.bak_${TIMESTAMP}"
 cp "$APP_LAYOUT" "${APP_LAYOUT}.bak_${TIMESTAMP}"
 echo "📦 Backup semua file OK"
 
-# ===== 1. UPDATE BASE TEMPLATE (PREMIUM iOS GLASS THEME) =====
+# ===== 1. UPDATE BASE TEMPLATE (GREETING MESSAGE + iOS THEME) =====
 cat > "$BASE_TEMPLATE" << 'EOF'
 @extends('templates/wrapper', [
-    'css' => ['body' => 'bg-neutral-900'],
+    'css' => ['body' => 'bg-neutral-800'],
 ])
 
 @section('container')
     <div id="modal-portal"></div>
     <div id="app"></div>
 
-    <!-- Premium iOS Glass Theme CSS -->
+    <!-- iOS Theme CSS -->
     <style>
-    /* ===== PREMIUM iOS GLASS THEME - RENSTR EDITION ===== */
+    /* ===== iOS DARK THEME - RENSTR EDITION ===== */
     :root {
-      --glass-bg: linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,20,30,0.98) 100%);
-      --glass-card: rgba(255, 255, 255, 0.08);
-      --glass-card-hover: rgba(255, 255, 255, 0.12);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --glass-border-glow: rgba(255, 255, 255, 0.2);
-      --glass-glow: 0 0 60px rgba(10, 132, 255, 0.2);
-      --ios-blue: linear-gradient(135deg, #0a84ff, #007aff);
-      --ios-purple: linear-gradient(135deg, #bf5af2, #9c3dd4);
-      --ios-green: linear-gradient(135deg, #30d158, #25c748);
-      --ios-red: linear-gradient(135deg, #ff375f, #ff2d55);
-      --text-primary: rgba(255, 255, 255, 0.95);
-      --text-secondary: rgba(255, 255, 255, 0.7);
-      --text-tertiary: rgba(255, 255, 255, 0.5);
+      --ios-bg: #000000;
+      --ios-card: rgba(28, 28, 30, 0.85);
+      --ios-card-secondary: rgba(44, 44, 46, 0.9);
+      --ios-surface: rgba(58, 58, 60, 0.8);
+      --ios-blue: #0a84ff;
+      --ios-blue-light: #5ac8fa;
+      --ios-green: #30d158;
+      --ios-red: #ff375f;
+      --ios-purple: #bf5af2;
+      --ios-orange: #ff9f0a;
+      --ios-text-primary: #ffffff;
+      --ios-text-secondary: #8e8e93;
+      --ios-text-tertiary: #636366;
+      --ios-border: rgba(56, 56, 58, 0.6);
+      --ios-blur: rgba(28, 28, 30, 0.75);
+      --ios-shadow: 0 10px 40px rgba(0,0,0,0.35);
+      --ios-glow: 0 0 40px rgba(10, 132, 255, 0.15);
     }
 
-    /* Main Background - Ultra Premium */
-    body {
-      background: var(--glass-bg), url('https://files.catbox.moe/z32ox4.jpg') !important;
+    /* iOS Theme Global Styles - EXCLUDE FILE MANAGER */
+    body:not(.file-manager-body) {
+      background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.9)), url('https://files.catbox.moe/z32ox4.jpg') !important;
       background-size: cover !important;
       background-position: center !important;
       background-attachment: fixed !important;
       background-repeat: no-repeat !important;
-      color: var(--text-primary) !important;
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', Roboto, sans-serif !important;
-      font-weight: 300 !important;
-      letter-spacing: 0.3px !important;
+      color: var(--ios-text-primary) !important;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Inter", sans-serif !important;
+      margin: 0;
+      padding: 0;
       min-height: 100vh;
       position: relative;
-      overflow-x: hidden;
     }
 
-    /* Ultra Premium Glass Effect Background */
-    body::before {
+    /* Background Overlay - EXCLUDE FILE MANAGER */
+    body:not(.file-manager-body)::before {
       content: '';
       position: fixed;
       top: 0;
@@ -72,745 +74,580 @@ cat > "$BASE_TEMPLATE" << 'EOF'
       right: 0;
       bottom: 0;
       background: 
-        radial-gradient(circle at 15% 15%, rgba(10, 132, 255, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 85% 85%, rgba(191, 90, 242, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(255, 55, 95, 0.08) 0%, transparent 60%),
-        linear-gradient(45deg, rgba(0,0,0,0.7) 0%, transparent 50%);
-      backdrop-filter: blur(100px) saturate(200%);
-      -webkit-backdrop-filter: blur(100px) saturate(200%);
-      z-index: -1;
+        radial-gradient(circle at 20% 20%, rgba(10, 132, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(191, 90, 242, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(255, 55, 95, 0.05) 0%, transparent 50%);
       pointer-events: none;
+      z-index: -1;
     }
 
-    /* Premium Glass Cards */
-    .bg-white, .bg-gray-100, .card, .panel, .dashboard-card, 
-    .bg-gray-800, .bg-gray-900, [class*="bg-"] {
-      background: var(--glass-card) !important;
-      backdrop-filter: blur(30px) saturate(180%) !important;
-      -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
-      border: 1px solid var(--glass-border) !important;
-      border-radius: 24px !important;
-      color: var(--text-primary) !important;
-      box-shadow: 
-        0 20px 60px rgba(0,0,0,0.4),
-        var(--glass-glow),
-        inset 0 1px 0 rgba(255,255,255,0.1) !important;
-      margin-bottom: 2rem !important;
-      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    /* iOS Cards - Glassmorphism Effect - EXCLUDE FILE MANAGER ELEMENTS */
+    .bg-white:not(.file-manager *):not(.elfinder *):not(.elfinder-toolbar *):not(.elfinder-navbar *):not(.elfinder-cwd-wrapper *),
+    .bg-gray-100:not(.file-manager *):not(.elfinder *):not(.elfinder-toolbar *):not(.elfinder-navbar *):not(.elfinder-cwd-wrapper *),
+    .card:not(.file-manager *):not(.elfinder *):not(.elfinder-dialog *),
+    .panel:not(.file-manager *):not(.elfinder *),
+    .dashboard-card:not(.file-manager *) {
+      background: var(--ios-card) !important;
+      backdrop-filter: blur(25px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+      border: 1px solid var(--ios-border) !important;
+      border-radius: 20px !important;
+      color: var(--ios-text-primary) !important;
+      box-shadow: var(--ios-shadow), var(--ios-glow) !important;
+      margin-bottom: 1.5rem !important;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
       overflow: hidden !important;
-      position: relative !important;
     }
 
-    /* Ultra Premium Card Hover Effect */
-    .bg-white:hover, .bg-gray-100:hover, .card:hover, .panel:hover {
-      background: var(--glass-card-hover) !important;
-      transform: translateY(-8px) scale(1.02) !important;
-      border-color: var(--glass-border-glow) !important;
-      box-shadow: 
-        0 30px 80px rgba(0,0,0,0.6),
-        0 0 100px rgba(10, 132, 255, 0.3),
-        inset 0 1px 0 rgba(255,255,255,0.2) !important;
+    .bg-white:hover:not(.file-manager *):not(.elfinder *),
+    .bg-gray-100:hover:not(.file-manager *):not(.elfinder *),
+    .card:hover:not(.file-manager *):not(.elfinder *) {
+      transform: translateY(-4px) !important;
+      border-color: rgba(10, 132, 255, 0.4) !important;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.4), 0 0 60px rgba(10, 132, 255, 0.2) !important;
     }
 
-    /* Premium Glass Card Inner Glow */
-    .bg-white::before, .bg-gray-100::before, .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255,255,255,0.3), 
-        transparent
-      );
-      z-index: 1;
-    }
-
-    /* Ultra Premium iOS Buttons */
-    button, .btn, [type="submit"], a.btn {
-      background: var(--ios-blue) !important;
+    /* iOS Buttons - EXCLUDE FILE MANAGER BUTTONS */
+    button:not(.elfinder *):not(.elfinder-button *):not(.elfinder-contextmenu *):not(.ui-button *),
+    .btn:not(.elfinder *):not(.elfinder-button *):not(.elfinder-contextmenu *):not(.ui-button *),
+    [type="submit"]:not(.elfinder *):not(.elfinder-button *) {
+      background: linear-gradient(135deg, #0a84ff, #007aff) !important;
       color: white !important;
       border: none !important;
-      border-radius: 18px !important;
-      padding: 18px 32px !important;
-      font-size: 18px !important;
+      border-radius: 14px !important;
+      padding: 16px 28px !important;
+      font-size: 17px !important;
       font-weight: 600 !important;
-      letter-spacing: 0.5px !important;
       cursor: pointer !important;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      letter-spacing: 0.2px !important;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(10, 132, 255, 0.3) !important;
-      text-transform: uppercase !important;
-      font-family: 'SF Pro Display', -apple-system, sans-serif !important;
     }
 
-    /* Button Hover Effects */
-    button:hover, .btn:hover, [type="submit"]:hover {
-      background: linear-gradient(135deg, #007aff, #0056d6) !important;
-      transform: translateY(-4px) scale(1.05) !important;
-      box-shadow: 
-        0 20px 50px rgba(10, 132, 255, 0.5),
-        0 0 60px rgba(10, 132, 255, 0.3) !important;
-      letter-spacing: 1px !important;
-    }
-
-    /* Button Active/Pressed Effect */
-    button:active, .btn:active {
-      transform: translateY(-2px) scale(0.98) !important;
-      transition: all 0.1s ease !important;
-    }
-
-    /* Ultra Premium Input Fields */
-    input, select, textarea, .form-input, .form-select {
-      background: rgba(255, 255, 255, 0.05) !important;
-      backdrop-filter: blur(20px) !important;
-      border: 2px solid var(--glass-border) !important;
-      border-radius: 16px !important;
-      color: var(--text-primary) !important;
-      padding: 16px 20px !important;
-      font-size: 17px !important;
-      font-weight: 400 !important;
-      font-family: 'SF Pro Text', -apple-system, sans-serif !important;
-      transition: all 0.3s ease !important;
-      box-shadow: inset 0 2px 10px rgba(0,0,0,0.2) !important;
-    }
-
-    /* Input Focus Effect */
-    input:focus, select:focus, textarea:focus {
-      background: rgba(255, 255, 255, 0.08) !important;
-      border-color: #0a84ff !important;
-      box-shadow: 
-        inset 0 2px 10px rgba(0,0,0,0.3),
-        0 0 0 4px rgba(10, 132, 255, 0.2) !important;
-      outline: none !important;
-      transform: translateY(-2px) !important;
-    }
-
-    /* Premium Header */
-    header, .navbar, .bg-gray-800 {
-      background: rgba(0, 0, 0, 0.4) !important;
-      backdrop-filter: blur(40px) saturate(200%) !important;
-      -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
-      border-bottom: 1px solid var(--glass-border) !important;
-      box-shadow: 
-        0 10px 30px rgba(0,0,0,0.3),
-        0 1px 0 rgba(255,255,255,0.05) !important;
-      padding: 1rem 0 !important;
-    }
-
-    /* Status Indicators - Premium Glow */
-    .bg-success, .status-online, .badge-success {
-      background: var(--ios-green) !important;
-      color: white !important;
-      box-shadow: 0 0 20px rgba(48, 209, 88, 0.4) !important;
-      animation: successGlow 2s infinite alternate !important;
-    }
-    
-    .bg-danger, .status-offline, .badge-danger {
-      background: var(--ios-red) !important;
-      color: white !important;
-      box-shadow: 0 0 20px rgba(255, 55, 95, 0.4) !important;
-      animation: dangerGlow 2s infinite alternate !important;
-    }
-    
-    .bg-primary, .status-active, .badge-primary {
-      background: var(--ios-blue) !important;
-      color: white !important;
-      box-shadow: 0 0 20px rgba(10, 132, 255, 0.4) !important;
-      animation: primaryGlow 2s infinite alternate !important;
-    }
-    
-    .bg-warning, .badge-warning {
-      background: linear-gradient(135deg, #ff9f0a, #ff8a00) !important;
-      color: white !important;
-      box-shadow: 0 0 20px rgba(255, 159, 10, 0.4) !important;
-    }
-
-    @keyframes successGlow {
-      from { box-shadow: 0 0 20px rgba(48, 209, 88, 0.4); }
-      to { box-shadow: 0 0 40px rgba(48, 209, 88, 0.6); }
-    }
-    
-    @keyframes dangerGlow {
-      from { box-shadow: 0 0 20px rgba(255, 55, 95, 0.4); }
-      to { box-shadow: 0 0 40px rgba(255, 55, 95, 0.6); }
-    }
-    
-    @keyframes primaryGlow {
-      from { box-shadow: 0 0 20px rgba(10, 132, 255, 0.4); }
-      to { box-shadow: 0 0 40px rgba(10, 132, 255, 0.6); }
-    }
-
-    /* Ultra Premium Scrollbar */
-    ::-webkit-scrollbar { 
-      width: 12px; 
-      height: 12px; 
-      background: transparent !important;
-    }
-    
-    ::-webkit-scrollbar-track { 
-      background: rgba(0,0,0,0.2) !important;
-      backdrop-filter: blur(10px) !important;
-      border-radius: 20px !important;
-      margin: 10px !important;
-    }
-    
-    ::-webkit-scrollbar-thumb { 
-      background: linear-gradient(135deg, #0a84ff, #bf5af2) !important;
-      border-radius: 20px !important;
-      border: 3px solid rgba(0,0,0,0.2) !important;
-      box-shadow: inset 0 0 10px rgba(255,255,255,0.2) !important;
-      transition: all 0.3s ease !important;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover { 
-      background: linear-gradient(135deg, #007aff, #9c3dd4) !important;
-      transform: scale(1.1) !important;
-    }
-
-    /* Premium Table Styling */
-    table {
-      background: rgba(255, 255, 255, 0.03) !important;
-      backdrop-filter: blur(30px) !important;
-      border-radius: 20px !important;
-      overflow: hidden !important;
-      border: 1px solid var(--glass-border) !important;
-      border-spacing: 0 !important;
-    }
-
-    th {
-      background: rgba(255, 255, 255, 0.1) !important;
-      color: var(--text-primary) !important;
-      font-weight: 600 !important;
-      padding: 20px !important;
-      border-bottom: 2px solid var(--glass-border) !important;
-      text-transform: uppercase !important;
-      letter-spacing: 1px !important;
-      font-size: 14px !important;
-    }
-
-    td {
-      padding: 18px 20px !important;
-      border-bottom: 1px solid rgba(255,255,255,0.05) !important;
-      color: var(--text-secondary) !important;
-      transition: all 0.3s ease !important;
-    }
-
-    tr:hover td {
-      background: rgba(10, 132, 255, 0.08) !important;
-      color: var(--text-primary) !important;
-      transform: translateX(5px) !important;
-    }
-
-    /* Premium Sidebar Navigation */
-    nav, aside, .sidebar {
-      background: rgba(0, 0, 0, 0.3) !important;
-      backdrop-filter: blur(40px) saturate(200%) !important;
-      border-right: 1px solid var(--glass-border) !important;
-      padding: 2rem 1rem !important;
-    }
-
-    nav a, aside a, .sidebar a {
-      color: var(--text-secondary) !important;
-      border-radius: 16px !important;
-      margin: 8px 0 !important;
-      padding: 16px 20px !important;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      display: flex !important;
-      align-items: center !important;
-      gap: 15px !important;
-      font-weight: 500 !important;
-      font-size: 16px !important;
-      position: relative !important;
-      overflow: hidden !important;
-    }
-
-    nav a:hover, aside a:hover {
-      background: rgba(10, 132, 255, 0.2) !important;
-      color: var(--text-primary) !important;
-      transform: translateX(10px) !important;
-      box-shadow: 0 10px 30px rgba(10, 132, 255, 0.2) !important;
-    }
-
-    nav a.active, aside a.active {
-      background: linear-gradient(90deg, 
-        rgba(10, 132, 255, 0.3), 
-        rgba(10, 132, 255, 0.15)
-      ) !important;
-      color: white !important;
-      border-left: 4px solid #0a84ff !important;
-    }
-
-    /* Premium Footer */
-    footer, .footer {
-      background: rgba(0, 0, 0, 0.5) !important;
-      backdrop-filter: blur(40px) !important;
-      border-top: 1px solid var(--glass-border) !important;
-      padding: 2rem 0 !important;
-      margin-top: 4rem !important;
-    }
-
-    /* Custom Footer Text - Premium Branding */
-    .text-center.text-xs.text-gray-500 {
-      font-size: 0 !important;
-    }
-    
-    .text-center.text-xs.text-gray-500::after {
-      content: "🅁 🄴 🄽 🅂 🅃 🅁  •  🄿 🅁 🄴 🄼 🄸 🅄 🄼  🄸 🄾 🅂  🅃 🄷 🄴 🄼 🄴";
-      font-size: 14px !important;
-      color: var(--text-tertiary) !important;
-      letter-spacing: 2px !important;
-      font-weight: 300 !important;
-      font-family: 'SF Pro Display', -apple-system, sans-serif !important;
-      text-transform: uppercase !important;
-    }
-
-    /* Premium Server Status Dots */
-    .status-dot::before {
-      content: '●';
-      font-size: 14px;
-      margin-right: 10px;
-      animation: premiumPulse 1.5s infinite ease-in-out;
-      text-shadow: 0 0 10px currentColor;
-    }
-    
-    @keyframes premiumPulse {
-      0%, 100% { 
-        opacity: 0.6; 
-        transform: scale(0.9); 
-      }
-      50% { 
-        opacity: 1; 
-        transform: scale(1.1); 
-      }
-    }
-
-    /* Premium Loading Spinner */
-    .spinner, .loading-spinner {
-      border: 4px solid rgba(10, 132, 255, 0.1);
-      border-top: 4px solid #0a84ff;
-      border-right: 4px solid #bf5af2;
-      border-bottom: 4px solid #30d158;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      animation: premiumSpin 1.5s linear infinite;
-      box-shadow: 0 0 30px rgba(10, 132, 255, 0.3);
-    }
-    
-    @keyframes premiumSpin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Premium Notification Badges */
-    .badge, .label, .tag {
-      background: var(--ios-blue) !important;
-      border-radius: 20px !important;
-      padding: 8px 16px !important;
-      font-size: 13px !important;
-      font-weight: 700 !important;
-      letter-spacing: 1px !important;
-      box-shadow: 0 5px 20px rgba(10, 132, 255, 0.3) !important;
-      animation: badgeFloat 3s infinite ease-in-out !important;
-      text-transform: uppercase !important;
-    }
-    
-    @keyframes badgeFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
-    }
-
-    /* Premium Progress Bars */
-    .progress {
-      background: rgba(255, 255, 255, 0.05) !important;
-      border-radius: 15px !important;
-      height: 12px !important;
-      overflow: hidden !important;
-      box-shadow: inset 0 2px 10px rgba(0,0,0,0.3) !important;
-    }
-
-    .progress-bar {
-      background: linear-gradient(90deg, 
-        #0a84ff, 
-        #bf5af2, 
-        #ff375f
-      ) !important;
-      border-radius: 15px !important;
-      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      position: relative !important;
-      overflow: hidden !important;
-    }
-
-    .progress-bar::after {
+    button:not(.elfinder *)::after,
+    .btn:not(.elfinder *)::after {
       content: '';
       position: absolute;
       top: 0;
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255,255,255,0.4), 
-        transparent
-      );
-      animation: shimmer 2s infinite;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.7s;
+    }
+
+    button:hover:not(.elfinder *),
+    .btn:hover:not(.elfinder *),
+    [type="submit"]:hover:not(.elfinder *) {
+      background: linear-gradient(135deg, #007aff, #0056d6) !important;
+      transform: translateY(-2px) scale(1.02) !important;
+      box-shadow: 0 12px 30px rgba(10, 132, 255, 0.4) !important;
+    }
+
+    /* iOS Inputs - EXCLUDE FILE MANAGER INPUTS */
+    input:not(.elfinder *):not(.elfinder-input *):not(.ui-widget-content *),
+    select:not(.elfinder *):not(.elfinder-input *),
+    textarea:not(.elfinder *):not(.elfinder-input *) {
+      background: var(--ios-card-secondary) !important;
+      border: 1.5px solid var(--ios-border) !important;
+      border-radius: 14px !important;
+      color: var(--ios-text-primary) !important;
+      padding: 14px 18px !important;
+      font-size: 17px !important;
+      transition: all 0.3s ease !important;
+      backdrop-filter: blur(10px) !important;
+    }
+
+    input:focus:not(.elfinder *),
+    select:focus:not(.elfinder *),
+    textarea:focus:not(.elfinder *) {
+      border-color: var(--ios-blue) !important;
+      box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.2) !important;
+      outline: none !important;
+      background: rgba(28, 28, 30, 0.95) !important;
+      transform: translateY(-1px) !important;
+    }
+
+    /* Header iOS - EXCLUDE FILE MANAGER HEADER */
+    .bg-gray-800:not(.elfinder *):not(.elfinder-navbar *),
+    header:not(.elfinder *):not(.elfinder-navbar *),
+    .navbar:not(.elfinder *) {
+      background: var(--ios-blur) !important;
+      backdrop-filter: blur(30px) saturate(200%) !important;
+      -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
+      border-bottom: 1px solid var(--ios-border) !important;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.3) !important;
+    }
+
+    /* Status Colors */
+    .bg-success:not(.elfinder *), 
+    .status-online:not(.elfinder *) { 
+      background: linear-gradient(135deg, var(--ios-green), #25c748) !important;
+      color: white !important;
     }
     
-    @keyframes shimmer {
-      100% { left: 100%; }
+    .bg-danger:not(.elfinder *), 
+    .status-offline:not(.elfinder *) { 
+      background: linear-gradient(135deg, var(--ios-red), #ff2d55) !important;
+      color: white !important;
+    }
+    
+    .bg-primary:not(.elfinder *), 
+    .status-active:not(.elfinder *) { 
+      background: linear-gradient(135deg, var(--ios-blue), #007aff) !important;
+      color: white !important;
+    }
+    
+    .bg-warning:not(.elfinder *) { 
+      background: linear-gradient(135deg, var(--ios-orange), #ff8a00) !important;
+      color: white !important;
     }
 
-    /* Premium Modal/Dialog */
-    .modal-content, .dialog, [role="dialog"] {
-      background: rgba(0, 0, 0, 0.7) !important;
-      backdrop-filter: blur(50px) saturate(200%) !important;
-      border: 1px solid var(--glass-border) !important;
-      border-radius: 30px !important;
-      box-shadow: 
-        0 40px 100px rgba(0,0,0,0.6),
-        0 0 120px rgba(10, 132, 255, 0.2) !important;
-      padding: 3rem !important;
+    /* Scrollbar iOS Style - EXCLUDE FILE MANAGER SCROLLBAR */
+    body:not(.file-manager-body)::-webkit-scrollbar { 
+      width: 10px; 
+      height: 10px; 
+    }
+    
+    body:not(.file-manager-body)::-webkit-scrollbar-track { 
+      background: rgba(0,0,0,0.3); 
+      border-radius: 10px;
+      margin: 4px;
+    }
+    
+    body:not(.file-manager-body)::-webkit-scrollbar-thumb { 
+      background: linear-gradient(180deg, var(--ios-blue), var(--ios-purple)) !important;
+      border-radius: 10px;
+      border: 2px solid rgba(0,0,0,0.3);
+    }
+    
+    body:not(.file-manager-body)::-webkit-scrollbar-thumb:hover { 
+      background: linear-gradient(180deg, #007aff, #bf5af2) !important;
     }
 
-    /* EXCLUDE FILE MANAGER AREAS */
-    #file-manager, 
-    .file-manager,
-    [data-file-manager],
-    #fm-wrapper,
-    .filemanager-wrapper {
-      background: transparent !important;
+    /* Table Styling - EXCLUDE FILE MANAGER TABLES */
+    table:not(.elfinder *):not(.elfinder-cwd *) {
+      background: var(--ios-card-secondary) !important;
+      backdrop-filter: blur(20px) !important;
+      border-radius: 16px !important;
+      overflow: hidden !important;
+      border: 1px solid var(--ios-border) !important;
+    }
+
+    th:not(.elfinder *) {
+      background: rgba(58, 58, 60, 0.7) !important;
+      color: var(--ios-text-primary) !important;
+      font-weight: 600 !important;
+      padding: 16px !important;
+      border-bottom: 1px solid var(--ios-border) !important;
+    }
+
+    td:not(.elfinder *) {
+      padding: 14px 16px !important;
+      border-bottom: 1px solid rgba(56, 56, 58, 0.4) !important;
+      color: var(--ios-text-secondary) !important;
+      transition: all 0.2s ease !important;
+    }
+
+    tr:hover td:not(.elfinder *) {
+      background: rgba(10, 132, 255, 0.05) !important;
+      color: var(--ios-text-primary) !important;
+    }
+
+    /* Footer Custom */
+    .text-center.text-xs.text-gray-500:not(.elfinder *) {
+      font-size: 0 !important;
+    }
+    
+    .text-center.text-xs.text-gray-500:not(.elfinder *)::after {
+      content: "© Rendzz Official • iOS Dark Theme";
+      font-size: 13px !important;
+      color: var(--ios-text-tertiary) !important;
+      letter-spacing: 0.3px !important;
+      opacity: 0.8;
+    }
+
+    /* Server Status Dots */
+    .status-dot:not(.elfinder *)::before {
+      content: '●';
+      font-size: 12px;
+      margin-right: 6px;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+
+    /* Loading Spinner */
+    .spinner:not(.elfinder *) {
+      border: 3px solid rgba(10, 132, 255, 0.3);
+      border-top: 3px solid var(--ios-blue);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Notification Badges */
+    .badge:not(.elfinder *) {
+      background: linear-gradient(135deg, var(--ios-red), #ff2d55) !important;
+      border-radius: 12px !important;
+      padding: 4px 12px !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      animation: badgePulse 2s infinite;
+    }
+    
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* Form Labels */
+    label:not(.elfinder *) {
+      color: var(--ios-text-secondary) !important;
+      font-size: 15px !important;
+      font-weight: 500 !important;
+      margin-bottom: 8px !important;
+      display: block;
+    }
+
+    /* Sidebar Navigation */
+    nav a:not(.elfinder *) {
+      color: var(--ios-text-secondary) !important;
+      border-radius: 14px !important;
+      margin: 6px 10px !important;
+      padding: 14px 18px !important;
+      transition: all 0.3s ease !important;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    nav a:hover:not(.elfinder *) {
+      background: rgba(10, 132, 255, 0.15) !important;
+      color: var(--ios-text-primary) !important;
+      transform: translateX(4px) !important;
+    }
+
+    nav a.active:not(.elfinder *) {
+      background: linear-gradient(90deg, rgba(10, 132, 255, 0.2), rgba(10, 132, 255, 0.1)) !important;
+      color: var(--ios-blue) !important;
+      border-left: 3px solid var(--ios-blue) !important;
+    }
+
+    /* Progress Bars */
+    .progress:not(.elfinder *) {
+      background: var(--ios-surface) !important;
+      border-radius: 10px !important;
+      height: 10px !important;
+      overflow: hidden !important;
+    }
+
+    .progress-bar:not(.elfinder *) {
+      background: linear-gradient(90deg, var(--ios-blue), var(--ios-purple)) !important;
+      border-radius: 10px !important;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* EXCLUSION FOR FILE MANAGER - KEEP ORIGINAL STYLING */
+    .file-manager-body,
+    .file-manager-body *,
+    .elfinder,
+    .elfinder *,
+    .elfinder-toolbar,
+    .elfinder-toolbar *,
+    .elfinder-navbar,
+    .elfinder-navbar *,
+    .elfinder-cwd,
+    .elfinder-cwd *,
+    .elfinder-dialog,
+    .elfinder-dialog *,
+    .elfinder-contextmenu,
+    .elfinder-contextmenu *,
+    .ui-widget,
+    .ui-widget * {
+      background: inherit !important;
       backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border-radius: 0 !important;
       border: none !important;
       box-shadow: none !important;
-      border-radius: 0 !important;
-    }
-    
-    /* Keep file manager buttons normal */
-    #file-manager button,
-    .file-manager .btn,
-    [data-file-manager] button {
-      background: #3498db !important;
-      border-radius: 6px !important;
-      padding: 8px 16px !important;
-      font-size: 14px !important;
-      box-shadow: none !important;
       transform: none !important;
-    }
-    
-    /* Keep file manager inputs normal */
-    #file-manager input,
-    .file-manager input {
-      background: white !important;
-      color: black !important;
-      border: 1px solid #ddd !important;
-      border-radius: 4px !important;
-      padding: 8px !important;
-      font-size: 14px !important;
-    }
-    
-    /* Keep file manager tables normal */
-    #file-manager table,
-    .file-manager table {
-      background: white !important;
-      color: black !important;
-      border: 1px solid #ddd !important;
-      border-radius: 4px !important;
+      transition: none !important;
+      color: inherit !important;
+      font-family: inherit !important;
     }
     </style>
 
-    <!-- Font Awesome Icons -->
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- SF Pro Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF+Pro+Text:wght@300;400;500;600;700&display=swap">
-    
-    <!-- Material Icons -->
+
+    <!-- SF Pro Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const username = @json(auth()->user()->name?? 'User');
         
-        // Ultra Premium Welcome Message
-        const welcomeDiv = document.createElement("div");
-        welcomeDiv.innerHTML = `
-          <div style="
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding: 25px;
-            background: linear-gradient(135deg, 
-              rgba(10, 132, 255, 0.15), 
-              rgba(191, 90, 242, 0.15)
-            );
-            backdrop-filter: blur(40px);
-            border-radius: 30px;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 
-              0 30px 80px rgba(0,0,0,0.5),
-              0 0 100px rgba(10, 132, 255, 0.2);
-            position: relative;
-            overflow: hidden;
-          ">
+        // Create iOS-style greeting message
+        const message = document.createElement("div");
+        message.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 12px;">
             <div style="
-              width: 70px;
-              height: 70px;
-              background: url('https://files.catbox.moe/s5j9uq.jpg') center/cover;
-              border-radius: 20px;
-              border: 3px solid rgba(255, 255, 255, 0.3);
-              box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            "></div>
-            <div>
-              <div style="
-                font-size: 24px;
-                font-weight: 800;
-                background: linear-gradient(135deg, #0a84ff, #bf5af2, #ff375f);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                margin-bottom: 5px;
-                letter-spacing: 1px;
-              ">
-                𝗪𝗘𝗟𝗖𝗢𝗠𝗘, ${username.toUpperCase()}! 👑
-              </div>
-              <div style="
-                font-size: 14px;
-                color: rgba(255,255,255,0.8);
-                letter-spacing: 3px;
-                text-transform: uppercase;
-              ">
-                🅁 🄴 🄽 🅂 🅃 🅁  •  🄿 🅁 🄴 🄼 🄸 🅄 🄼  🄴 🄳 🄸 🅃 🄸 🄾 🄽
-              </div>
-            </div>
-            <div style="
-              position: absolute;
-              top: 0;
-              right: 0;
-              padding: 10px 20px;
-              background: rgba(10, 132, 255, 0.3);
-              border-bottom-left-radius: 20px;
-              font-size: 12px;
-              letter-spacing: 2px;
+              width: 40px;
+              height: 40px;
+              background: linear-gradient(135deg, #0a84ff, #bf5af2);
+              border-radius: 12px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 18px;
+              color: white;
             ">
-              🚀 VIP
+              <i class="fas fa-cube"></i>
+            </div>
+            <div>
+              <div style="font-weight: 600; font-size: 15px;">Welcome, <strong>${username}</strong>! 👋</div>
+              <div style="font-size: 12px; opacity: 0.8; margin-top: 2px;">
+                © Rendzz Official • All Rights Reserved
+              </div>
             </div>
           </div>
         `;
         
-        Object.assign(welcomeDiv.style, {
+        Object.assign(message.style, {
           position: "fixed",
-          top: "30px",
-          right: "30px",
+          bottom: "25px",
+          right: "25px",
+          background: "rgba(28, 28, 30, 0.9)",
+          backdropFilter: "blur(30px) saturate(180%)",
+          WebkitBackdropFilter: "blur(30px) saturate(180%)",
+          color: "#ffffff",
+          padding: "18px 22px",
+          borderRadius: "20px",
+          fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif",
+          fontSize: "14px",
+          boxShadow: "0 15px 40px rgba(0,0,0,0.4), 0 0 50px rgba(10, 132, 255, 0.15)",
+          border: "1px solid rgba(56, 56, 58, 0.6)",
           zIndex: "99999",
           opacity: "0",
-          transform: "translateX(100px) scale(0.8)",
-          transition: "all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)",
-          maxWidth: "450px",
+          transform: "translateY(100px) scale(0.9)",
+          transition: "all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          maxWidth: "320px",
           cursor: "pointer",
         });
 
-        document.body.appendChild(welcomeDiv);
+        document.body.appendChild(message);
         
         // Animate in
         setTimeout(() => {
-          welcomeDiv.style.opacity = "1";
-          welcomeDiv.style.transform = "translateX(0) scale(1)";
+          message.style.opacity = "1";
+          message.style.transform = "translateY(0) scale(1)";
         }, 500);
         
-        // Auto-hide after 8 seconds
+        // Auto-hide after 6 seconds
         setTimeout(() => {
-          welcomeDiv.style.opacity = "0";
-          welcomeDiv.style.transform = "translateX(100px) scale(0.8)";
-        }, 8000);
+          message.style.opacity = "0";
+          message.style.transform = "translateY(100px) scale(0.9)";
+        }, 6000);
         
-        setTimeout(() => welcomeDiv.remove(), 9000);
+        setTimeout(() => {
+          if (message.parentNode) {
+            message.remove();
+          }
+        }, 7000);
 
-        // Click to dismiss
-        welcomeDiv.addEventListener("click", () => {
-          welcomeDiv.style.opacity = "0";
-          welcomeDiv.style.transform = "translateX(100px) scale(0.8)";
-          setTimeout(() => welcomeDiv.remove(), 500);
+        // Add click to dismiss
+        message.addEventListener("click", () => {
+          message.style.opacity = "0";
+          message.style.transform = "translateY(100px) scale(0.9)";
+          setTimeout(() => {
+            if (message.parentNode) {
+              message.remove();
+            }
+          }, 500);
         });
 
-        // Replace Pterodactyl Logo
-        setTimeout(() => {
-          const logos = document.querySelectorAll('img[src*="logo"], img[alt*="Pterodactyl"], img[alt*="Logo"]');
-          logos.forEach(logo => {
-            logo.src = 'https://files.catbox.moe/s5j9uq.jpg';
-            logo.style.borderRadius = '15px';
-            logo.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
-            logo.style.border = '3px solid rgba(255,255,255,0.1)';
+        // Add iOS-style icon replacements (excluding file manager)
+        const replaceIcons = () => {
+          // Server icons - exclude file manager
+          document.querySelectorAll('.fa-server:not(.elfinder *)').forEach(icon => {
+            icon.className = 'fas fa-cube';
           });
-        }, 1000);
+          
+          // Database icons - exclude file manager
+          document.querySelectorAll('.fa-database:not(.elfinder *)').forEach(icon => {
+            icon.className = 'fas fa-layer-group';
+          });
+          
+          // User icons - exclude file manager
+          document.querySelectorAll('.fa-user:not(.elfinder *)').forEach(icon => {
+            icon.className = 'fas fa-user-circle';
+          });
+          
+          // Settings icons - exclude file manager
+          document.querySelectorAll('.fa-cog:not(.elfinder *)').forEach(icon => {
+            icon.className = 'fas fa-sliders-h';
+          });
+          
+          // Power icons - exclude file manager
+          document.querySelectorAll('.fa-power-off:not(.elfinder *)').forEach(icon => {
+            icon.className = 'fas fa-bolt';
+          });
+        };
+
+        // Run icon replacement
+        setTimeout(replaceIcons, 1000);
+        setInterval(replaceIcons, 5000);
+
+        // Detect file manager and add class to body
+        const checkFileManager = () => {
+          if (document.querySelector('.elfinder') || 
+              document.querySelector('.file-manager') || 
+              window.location.href.includes('/file-manager')) {
+            document.body.classList.add('file-manager-body');
+          } else {
+            document.body.classList.remove('file-manager-body');
+          }
+        };
+
+        // Check for file manager initially and on changes
+        checkFileManager();
+        setInterval(checkFileManager, 1000);
       });
     </script>
 @endsection
 EOF
 
-echo "✅ Premium iOS Glass Theme installed!"
+echo "✅ Base template updated with iOS theme and background"
 
 # ===== 2. UPDATE AUTH LAYOUT (LOGIN PAGE) =====
 AUTH_CSS="<style>
-/* Ultra Premium Login Page */
-#app > div {
-  background: linear-gradient(rgba(0,0,0,0.95), rgba(0,0,0,0.9)), url('${BG_IMAGE}') !important;
+/* Login Page Specific iOS Styles */
+#app > div:not(.file-manager-body) {
+  background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.85)), url('${BG_IMAGE}') !important;
   background-size: cover !important;
   background-position: center !important;
   background-attachment: fixed !important;
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
 }
 
-/* Premium Login Glass Effect */
-#app > div::before {
+#app > div:not(.file-manager-body)::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  right: -50%;
-  bottom: -50%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: 
-    radial-gradient(circle at 20% 20%, rgba(10, 132, 255, 0.25) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(191, 90, 242, 0.25) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(255, 55, 95, 0.15) 0%, transparent 60%);
-  backdrop-filter: blur(150px);
-  animation: rotateBg 30s linear infinite;
-  z-index: 0;
+    radial-gradient(circle at 30% 30%, rgba(10, 132, 255, 0.1) 0%, transparent 60%),
+    radial-gradient(circle at 70% 70%, rgba(191, 90, 242, 0.1) 0%, transparent 60%);
+  pointer-events: none;
 }
 
-@keyframes rotateBg {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Ultra Premium Login Card */
-.bg-white, .bg-gray-100 {
-  background: rgba(255, 255, 255, 0.05) !important;
-  backdrop-filter: blur(60px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(60px) saturate(200%) !important;
-  border: 2px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 40px !important;
-  padding: 4rem !important;
-  max-width: 500px !important;
+/* Login Card Enhancement - exclude file manager */
+.bg-white:not(.file-manager *),
+.bg-gray-100:not(.file-manager *) {
+  background: rgba(28, 28, 30, 0.9) !important;
+  backdrop-filter: blur(40px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
+  border: 1px solid rgba(56, 56, 58, 0.5) !important;
+  border-radius: 24px !important;
+  padding: 2.5rem !important;
+  max-width: 420px !important;
   width: 90% !important;
-  box-shadow: 
-    0 40px 100px rgba(0,0,0,0.6),
-    0 0 150px rgba(10, 132, 255, 0.3),
-    inset 0 1px 0 rgba(255,255,255,0.2) !important;
-  position: relative;
-  z-index: 1;
   margin: 2rem !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 80px rgba(10, 132, 255, 0.1) !important;
 }
 
-/* Premium Login Title */
-.text-2xl, .text-3xl, h1, h2 {
-  background: linear-gradient(135deg, 
-    #0a84ff 0%, 
-    #bf5af2 50%, 
-    #ff375f 100%
-  ) !important;
+/* Login Title */
+.text-2xl:not(.file-manager *),
+.text-3xl:not(.file-manager *) {
+  background: linear-gradient(90deg, #0a84ff, #5ac8fa, #bf5af2) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  background-size: 300% 300% !important;
-  animation: gradientFlow 5s ease infinite !important;
-  font-weight: 900 !important;
-  font-size: 3rem !important;
-  letter-spacing: -1px !important;
+  background-size: 200% auto !important;
+  animation: gradientShift 3s ease infinite !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.5px !important;
   text-align: center !important;
-  margin-bottom: 3rem !important;
-  font-family: 'SF Pro Display', sans-serif !important;
-  text-transform: uppercase !important;
+  margin-bottom: 2rem !important;
 }
 
-@keyframes gradientFlow {
+@keyframes gradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Premium Login Button */
-button[type=\"submit\"] {
+/* Login Button - exclude file manager */
+button[type=\"submit\"]:not(.file-manager *) {
   width: 100% !important;
-  margin-top: 2.5rem !important;
-  font-size: 20px !important;
-  padding: 22px !important;
-  border-radius: 20px !important;
-  letter-spacing: 2px !important;
-  text-transform: uppercase !important;
-  font-weight: 800 !important;
+  margin-top: 1.5rem !important;
+  font-size: 18px !important;
+  padding: 18px !important;
 }
 
-/* Premium Login Footer */
-.text-center.text-xs.text-gray-500::after {
-  content: '🅁 🄴 🄽 🅂 🅃 🅁  •  🄿 🅁 🄴 🄼 🄸 🅄 🄼  🄸 🄾 🅂  🅃 🄷 🄴 🄼 🄴';
-  color: rgba(255, 255, 255, 0.4) !important;
-  font-size: 13px !important;
-  letter-spacing: 3px !important;
-  font-family: 'SF Pro Text', sans-serif !important;
-  text-transform: uppercase !important;
-  margin-top: 3rem !important;
-  display: block !important;
+/* Login Footer */
+.text-center.text-xs.text-gray-500:not(.file-manager *)::after {
+  content: '© Rendzz Official • iOS Dark Theme';
+  color: rgba(142, 142, 147, 0.7) !important;
+  font-size: 12px !important;
+  margin-top: 2rem !important;
+  display: block;
 }
 </style>"
 
-# Insert CSS at the end of head
-if grep -q "</head>" "$AUTH_LAYOUT"; then
-    sed -i "/<\/head>/i $AUTH_CSS" "$AUTH_LAYOUT"
-else
-    echo "$AUTH_CSS" >> "$AUTH_LAYOUT"
-fi
+sed -i "/<\/head>/i $AUTH_CSS" "$AUTH_LAYOUT"
 
-# ===== 3. ADD PREMIUM FONTS =====
+# ===== 3. ADD FONTS TO ALL PAGES =====
 FONT_LINK='<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800;900&family=SF+Pro+Text:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">'
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">'
 
-# Add fonts to both layouts
-for layout in "$AUTH_LAYOUT" "$APP_LAYOUT"; do
-    if grep -q "</head>" "$layout"; then
-        sed -i "/<\/head>/i $FONT_LINK" "$layout"
-    else
-        echo "$FONT_LINK" >> "$layout"
-    fi
-done
+sed -i "/<\/head>/i $FONT_LINK" "$AUTH_LAYOUT"
+sed -i "/<\/head>/i $FONT_LINK" "$APP_LAYOUT"
 
-# ===== 4. PERMISSIONS =====
+# ===== 4. UPDATE APP LAYOUT (Dashboard) =====
+sed -i "/<\/head>/i $AUTH_CSS" "$APP_LAYOUT"
+
+# ===== 5. PERMISSIONS =====
 chown -R www-data:www-data "$PANEL_PATH"
 
-# ===== 5. CLEAR CACHE =====
+# ===== 6. CLEAR CACHE =====
 cd "$PANEL_PATH" || exit
 php artisan view:clear
 php artisan cache:clear
 php artisan config:clear
 php artisan route:clear
 
-echo ""
-echo "╔══════════════════════════════════════════════════════════════╗"
-echo "║                    🎉 INSTALLATION COMPLETE!                  ║"
-echo "╠══════════════════════════════════════════════════════════════╣"
-echo "║                                                              ║"
-echo "║  ✨ ULTRA PREMIUM FEATURES:                                  ║"
-echo "║     • Premium iOS Glass Morphism Design                     ║"
-echo "║     • Custom Icon: ${ICON_IMAGE:0:40}... ║"
-echo "║     • Ultra Smooth Animations & Transitions                 ║"
-echo "║     • Premium Gradients & Glow Effects                      ║"
-echo "║     • SF Pro Display Fonts                                  ║"
-echo "║     • VIP Welcome Message                                   ║"
-echo "║     • File Manager PROTECTED (Not Affected)                 ║"
-echo "║     • Premium Branding: RENSTR • PREMIUM iOS THEME          ║"
-echo "║                                                              ║"
-echo "║  🚀 YOUR PANEL IS NOW ULTRA PREMIUM!                        ║"
-echo "║                                                              ║"
-echo "╚══════════════════════════════════════════════════════════════╝"
-echo ""
-echo "🔄 Please refresh your browser to see the premium changes!"
-echo ""
+echo "========================================="
+echo "🎉 iOS DARK THEME UPDATED SUCCESSFULLY!"
+echo "========================================="
+echo "✨ Features included:"
+echo "• Custom Background: $BG_IMAGE"
+echo "• iOS Glassmorphism Design"
+echo "• Welcome Message with User Name"
+echo "• All iOS Icons (Anti Tuldian)"
+echo "• Smooth Animations & Transitions"
+echo "• Gradient Buttons & Cards"
+echo "• Scrollbar Styling"
+echo "• Status Indicators"
+echo "• © Rendzz Official Copyright"
+echo "• ✅ File Manager Preserved (Original Styling)"
+echo "========================================="
+echo "🔄 Please refresh your browser to see changes!"
+echo "========================================="
