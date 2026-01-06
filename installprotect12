@@ -1,60 +1,79 @@
+
 #!/bin/bash
 
-echo "🎨 Memasang Custom Background & Branding Panel..."
+echo "🚀 Install Full Theme RendzzSTR 2026..."
 
 # ================= CONFIG =================
 PANEL_PATH="/var/www/pterodactyl"
-LOGIN_VIEW="$PANEL_PATH/resources/views/auth/login.blade.php"
+
+AUTH_LAYOUT="$PANEL_PATH/resources/views/layouts/auth.blade.php"
+APP_LAYOUT="$PANEL_PATH/resources/views/layouts/app.blade.php"
 APP_CONFIG="$PANEL_PATH/config/app.php"
 
 IMAGE_URL="https://files.catbox.moe/j8860d.jpg"
+LOGO_URL="https://files.catbox.moe/j8860d.jpg"
 BRAND_NAME="RendzzSTR 2026"
+
 TIMESTAMP=$(date -u +"%Y-%m-%d-%H-%M-%S")
 
 # ================= BACKUP =================
-if [ -f "$LOGIN_VIEW" ]; then
-  cp "$LOGIN_VIEW" "$LOGIN_VIEW.bak_$TIMESTAMP"
-  echo "📦 Backup login.blade.php dibuat"
-fi
+cp "$AUTH_LAYOUT" "$AUTH_LAYOUT.bak_$TIMESTAMP"
+cp "$APP_LAYOUT" "$APP_LAYOUT.bak_$TIMESTAMP"
+cp "$APP_CONFIG" "$APP_CONFIG.bak_$TIMESTAMP"
 
-if [ -f "$APP_CONFIG" ]; then
-  cp "$APP_CONFIG" "$APP_CONFIG.bak_$TIMESTAMP"
-  echo "📦 Backup app.php dibuat"
-fi
+echo "📦 Backup selesai"
 
-# ================= GANTI BACKGROUND LOGIN =================
-cat > "$LOGIN_VIEW" << 'EOF'
-@extends('layouts.auth')
+# ================= AUTH (LOGIN) =================
+sed -i '/<\/head>/i \
+<style>\n\
+/* ===== RendzzSTR 2026 LOGIN ===== */\n\
+body {\n\
+  background: url("'"$IMAGE_URL"'") no-repeat center center fixed !important;\n\
+  background-size: cover !important;\n\
+}\n\
+.bg-neutral-900,.bg-neutral-800,.bg-gray-900,.bg-gray-800 {\n\
+  background: rgba(0,0,0,0.65) !important;\n\
+  backdrop-filter: blur(6px);\n\
+}\n\
+.login-brand{text-align:center;margin-bottom:15px}\n\
+.login-brand img{width:90px;border-radius:12px;margin-bottom:10px}\n\
+.login-brand h1{font-size:22px;font-weight:bold}\n\
+</style>\n' "$AUTH_LAYOUT"
 
-@section('content')
-<style>
-body {
-    background: url('https://files.catbox.moe/j8860d.jpg') no-repeat center center fixed;
-    background-size: cover;
-}
-.login-container {
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(6px);
-    border-radius: 12px;
-}
-</style>
+sed -i '/@yield/i \
+<div class="login-brand">\n\
+<img src="'"$LOGO_URL"'">\n\
+<h1>'"$BRAND_NAME"'</h1>\n\
+</div>\n' "$AUTH_LAYOUT"
 
-<div class="login-container p-4">
-    @include('auth.partials.login-form')
-</div>
-@endsection
-EOF
+echo "🔐 Login background + logo + text OK"
 
-echo "🖼️ Background login berhasil dipasang"
+# ================= PANEL (APP) =================
+sed -i '/<\/head>/i \
+<style>\n\
+/* ===== RendzzSTR 2026 PANEL ===== */\n\
+body {\n\
+  background: url("'"$IMAGE_URL"'") no-repeat center center fixed !important;\n\
+  background-size: cover !important;\n\
+}\n\
+.bg-neutral-900,.bg-neutral-800,.bg-gray-900,.bg-gray-800 {\n\
+  background: rgba(0,0,0,0.65) !important;\n\
+  backdrop-filter: blur(6px);\n\
+}\n\
+.rendzz-brand{display:flex;align-items:center;gap:10px;font-weight:bold;font-size:18px;padding:10px}\n\
+.rendzz-brand img{width:32px;height:32px;border-radius:6px}\n\
+</style>\n' "$APP_LAYOUT"
 
-# ================= GANTI NAMA PANEL =================
+sed -i '0,/<nav/{s/<nav/<nav>\n<div class="rendzz-brand">\n<img src="'"$LOGO_URL"'">\n<span>'"$BRAND_NAME"'<\/span>\n<\/div>/}' "$APP_LAYOUT"
+
+echo "🧭 Panel background + logo + text OK"
+
+# ================= PANEL NAME =================
 sed -i "s/'name' => .*/'name' => '$BRAND_NAME',/" "$APP_CONFIG"
-
-echo "✏️ Nama panel diganti jadi: $BRAND_NAME"
+echo "✏️ Nama panel diganti"
 
 # ================= PERMISSION =================
 chown -R www-data:www-data "$PANEL_PATH"
-chmod -R 755 "$PANEL_PATH"
 
 # ================= CLEAR CACHE =================
 cd "$PANEL_PATH" || exit
@@ -63,7 +82,4 @@ php artisan config:clear
 php artisan cache:clear
 
 echo "🧹 Cache dibersihkan"
-
-echo "✅ Custom Background & Branding BERHASIL!"
-echo "🎯 Panel Name : $BRAND_NAME"
-echo "🖼️ Image      : $IMAGE_URL"
+echo "✅ FULL THEME RendzzSTR 2026 BERHASIL!"
