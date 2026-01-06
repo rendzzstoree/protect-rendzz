@@ -1,85 +1,48 @@
-
 #!/bin/bash
 
-echo "🚀 Install Full Theme RendzzSTR 2026..."
+echo "🚀 Ganti tulisan & background Pterodactyl..."
 
-# ================= CONFIG =================
 PANEL_PATH="/var/www/pterodactyl"
-
+LOGIN_VIEW="$PANEL_PATH/resources/views/auth/login.blade.php"
 AUTH_LAYOUT="$PANEL_PATH/resources/views/layouts/auth.blade.php"
-APP_LAYOUT="$PANEL_PATH/resources/views/layouts/app.blade.php"
-APP_CONFIG="$PANEL_PATH/config/app.php"
 
 IMAGE_URL="https://files.catbox.moe/j8860d.jpg"
-LOGO_URL="https://files.catbox.moe/j8860d.jpg"
-BRAND_NAME="RendzzSTR 2026"
-
+NEW_TEXT="RENSTR!"
 TIMESTAMP=$(date -u +"%Y-%m-%d-%H-%M-%S")
 
-# ================= BACKUP =================
+# ===== BACKUP =====
+cp "$LOGIN_VIEW" "$LOGIN_VIEW.bak_$TIMESTAMP"
 cp "$AUTH_LAYOUT" "$AUTH_LAYOUT.bak_$TIMESTAMP"
-cp "$APP_LAYOUT" "$APP_LAYOUT.bak_$TIMESTAMP"
-cp "$APP_CONFIG" "$APP_CONFIG.bak_$TIMESTAMP"
+echo "📦 Backup aman"
 
-echo "📦 Backup selesai"
+# ===== GANTI TULISAN =====
+sed -i 's/Pterodactyl Software/'"$NEW_TEXT"'/g' "$LOGIN_VIEW"
+echo "✏️ Tulisan diganti jadi $NEW_TEXT"
 
-# ================= AUTH (LOGIN) =================
+# ===== OVERRIDE BACKGROUND ORIGINAL =====
 sed -i '/<\/head>/i \
 <style>\n\
-/* ===== RendzzSTR 2026 LOGIN ===== */\n\
-body {\n\
+/* === FORCE BACKGROUND LOGIN (RENSTR) === */\n\
+html, body {\n\
   background: url("'"$IMAGE_URL"'") no-repeat center center fixed !important;\n\
   background-size: cover !important;\n\
 }\n\
-.bg-neutral-900,.bg-neutral-800,.bg-gray-900,.bg-gray-800 {\n\
-  background: rgba(0,0,0,0.65) !important;\n\
-  backdrop-filter: blur(6px);\n\
+.bg-neutral-900,\n\
+.bg-neutral-800,\n\
+.bg-gray-900,\n\
+.bg-gray-800 {\n\
+  background-color: rgba(0,0,0,0.65) !important;\n\
 }\n\
-.login-brand{text-align:center;margin-bottom:15px}\n\
-.login-brand img{width:90px;border-radius:12px;margin-bottom:10px}\n\
-.login-brand h1{font-size:22px;font-weight:bold}\n\
 </style>\n' "$AUTH_LAYOUT"
 
-sed -i '/@yield/i \
-<div class="login-brand">\n\
-<img src="'"$LOGO_URL"'">\n\
-<h1>'"$BRAND_NAME"'</h1>\n\
-</div>\n' "$AUTH_LAYOUT"
-
-echo "🔐 Login background + logo + text OK"
-
-# ================= PANEL (APP) =================
-sed -i '/<\/head>/i \
-<style>\n\
-/* ===== RendzzSTR 2026 PANEL ===== */\n\
-body {\n\
-  background: url("'"$IMAGE_URL"'") no-repeat center center fixed !important;\n\
-  background-size: cover !important;\n\
-}\n\
-.bg-neutral-900,.bg-neutral-800,.bg-gray-900,.bg-gray-800 {\n\
-  background: rgba(0,0,0,0.65) !important;\n\
-  backdrop-filter: blur(6px);\n\
-}\n\
-.rendzz-brand{display:flex;align-items:center;gap:10px;font-weight:bold;font-size:18px;padding:10px}\n\
-.rendzz-brand img{width:32px;height:32px;border-radius:6px}\n\
-</style>\n' "$APP_LAYOUT"
-
-sed -i '0,/<nav/{s/<nav/<nav>\n<div class="rendzz-brand">\n<img src="'"$LOGO_URL"'">\n<span>'"$BRAND_NAME"'<\/span>\n<\/div>/}' "$APP_LAYOUT"
-
-echo "🧭 Panel background + logo + text OK"
-
-# ================= PANEL NAME =================
-sed -i "s/'name' => .*/'name' => '$BRAND_NAME',/" "$APP_CONFIG"
-echo "✏️ Nama panel diganti"
-
-# ================= PERMISSION =================
+# ===== PERMISSION =====
 chown -R www-data:www-data "$PANEL_PATH"
 
-# ================= CLEAR CACHE =================
+# ===== CLEAR CACHE =====
 cd "$PANEL_PATH" || exit
 php artisan view:clear
-php artisan config:clear
 php artisan cache:clear
 
-echo "🧹 Cache dibersihkan"
-echo "✅ FULL THEME RendzzSTR 2026 BERHASIL!"
+echo "✅ SELESAI!"
+echo "🖼️ Background: Custom Foto"
+echo "✏️ Text: RENSTR!"
