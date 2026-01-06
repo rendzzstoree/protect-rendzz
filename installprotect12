@@ -1,0 +1,69 @@
+#!/bin/bash
+
+echo "🎨 Memasang Custom Background & Branding Panel..."
+
+# ================= CONFIG =================
+PANEL_PATH="/var/www/pterodactyl"
+LOGIN_VIEW="$PANEL_PATH/resources/views/auth/login.blade.php"
+APP_CONFIG="$PANEL_PATH/config/app.php"
+
+IMAGE_URL="https://files.catbox.moe/j8860d.jpg"
+BRAND_NAME="RendzzSTR 2026"
+TIMESTAMP=$(date -u +"%Y-%m-%d-%H-%M-%S")
+
+# ================= BACKUP =================
+if [ -f "$LOGIN_VIEW" ]; then
+  cp "$LOGIN_VIEW" "$LOGIN_VIEW.bak_$TIMESTAMP"
+  echo "📦 Backup login.blade.php dibuat"
+fi
+
+if [ -f "$APP_CONFIG" ]; then
+  cp "$APP_CONFIG" "$APP_CONFIG.bak_$TIMESTAMP"
+  echo "📦 Backup app.php dibuat"
+fi
+
+# ================= GANTI BACKGROUND LOGIN =================
+cat > "$LOGIN_VIEW" << 'EOF'
+@extends('layouts.auth')
+
+@section('content')
+<style>
+body {
+    background: url('https://files.catbox.moe/j8860d.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+.login-container {
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+}
+</style>
+
+<div class="login-container p-4">
+    @include('auth.partials.login-form')
+</div>
+@endsection
+EOF
+
+echo "🖼️ Background login berhasil dipasang"
+
+# ================= GANTI NAMA PANEL =================
+sed -i "s/'name' => .*/'name' => '$BRAND_NAME',/" "$APP_CONFIG"
+
+echo "✏️ Nama panel diganti jadi: $BRAND_NAME"
+
+# ================= PERMISSION =================
+chown -R www-data:www-data "$PANEL_PATH"
+chmod -R 755 "$PANEL_PATH"
+
+# ================= CLEAR CACHE =================
+cd "$PANEL_PATH" || exit
+php artisan view:clear
+php artisan config:clear
+php artisan cache:clear
+
+echo "🧹 Cache dibersihkan"
+
+echo "✅ Custom Background & Branding BERHASIL!"
+echo "🎯 Panel Name : $BRAND_NAME"
+echo "🖼️ Image      : $IMAGE_URL"
